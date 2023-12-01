@@ -15,48 +15,32 @@ Coded by www.creative-tim.com
 
 // Copied from ./layouts/authentication/sign-in/basic
 
-import { useState } from "react";
+import { Wrapper, Form, TextInput, Button } from "library";
 
 // @mui material components
 import Card from "@mui/material/Card";
-
-// Soft UI Dashboard PRO React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-import SoftInput from "components/SoftInput";
-import SoftButton from "components/SoftButton";
-
-import BasicWrapper from "custom_components/basic_wrapper";
 
 // Images
 import curved9 from "assets/images/curved-images/curved9.jpg";
 
 function Login() {
     return (
-        <BasicWrapper title="Welcome!" description="Login Here" image={curved9}>
+        <Wrapper title="Welcome!" description="Login Here" image={curved9}>
             <Card>
-                <SoftBox p={3} mb={1} textAlign="center">
-                    <SoftTypography variant="h5" fontWeight="medium">
-                        Sign in
-                    </SoftTypography>
-                </SoftBox>
-                <SoftBox p={3}>
-                    <SoftBox component="form" role="form">
-                        <SoftBox mb={2}>
-                            <SoftInput type="email" placeholder="Email" />
-                        </SoftBox>
-                        <SoftBox mb={2}>
-                            <SoftInput type="password" placeholder="Password" />
-                        </SoftBox>
-                        <SoftBox mt={4} mb={1}>
-                            <SoftButton variant="gradient" color="info" fullWidth>
-                                sign in
-                            </SoftButton>
-                        </SoftBox>
-                    </SoftBox>
-                </SoftBox>
+                <div style={{ textAlign: "center" }}>
+                    <h5>Sign in</h5>
+                </div>
+                <div>
+                    <Form>
+                        <TextInput type="email" placeholder="Email" />
+                        <TextInput type="password" placeholder="Password" />
+                        <Button type="info" full_width>
+                            sign in
+                        </Button>
+                    </Form>
+                </div>
             </Card>
-        </BasicWrapper>
+        </Wrapper>
     );
 }
 
