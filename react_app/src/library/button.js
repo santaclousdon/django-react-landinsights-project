@@ -1,5 +1,4 @@
 import React from "react";
-import { Modal } from "library";
 
 class Button extends React.Component {
     constructor(props) {
@@ -21,7 +20,7 @@ class Button extends React.Component {
         }
 
         if (this.props.href) {
-            if (this.props.target == "_blank") {
+            if (this.props.target === "_blank") {
                 window.open(this.props.href, "_blank");
             } else {
                 window.location.href = this.props.href;
@@ -44,13 +43,7 @@ class Button extends React.Component {
         }
 
         return (
-            <button
-                className={`btn ${type}`}
-                onClick={this.click}
-                style={css}
-                {...disabled}
-                type="button"
-            >
+            <button className={`btn ${type}`} onClick={this.click} style={style} {...disabled} type="button">
                 {this.props.children}
             </button>
         );

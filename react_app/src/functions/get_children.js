@@ -1,3 +1,5 @@
+import { is_valid_react_child } from "functions";
+
 function get_children(context) {
     const children = [];
     if (context.children !== undefined) {
@@ -5,7 +7,7 @@ function get_children(context) {
         if (context.children.length > 0) {
             Object.keys(context.children).forEach((index) => {
                 const child = context.children[index];
-                if (window.cmState.is_valid_react_child(child)) {
+                if (is_valid_react_child(child)) {
                     children.push(child);
                 }
             });

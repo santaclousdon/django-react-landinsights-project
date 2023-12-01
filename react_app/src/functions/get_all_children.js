@@ -8,17 +8,10 @@ function get_all_children(component, parentFunctions, formState) {
 
     Object.keys(topChildren).forEach((index) => {
         const childComponent = topChildren[index];
-        const { _children } = childComponent.props;
 
         let dataMapping = parentFunctions;
         if (formState) {
-            dataMapping = getFormProps(
-                formState,
-                childComponent,
-                dataMapping,
-                index,
-                component.props.autoFocus
-            );
+            dataMapping = getFormProps(formState, childComponent, dataMapping, index, component.props.autoFocus);
         }
         dataMapping.children = get_all_children(childComponent, formState);
 

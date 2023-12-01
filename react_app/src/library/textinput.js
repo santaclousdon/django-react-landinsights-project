@@ -1,5 +1,4 @@
 import React from "react";
-import { regexCheck } from "functions";
 
 export default function TextInput(props) {
     const style = props.style || {};
@@ -39,11 +38,7 @@ export default function TextInput(props) {
 
     let icon = null;
     if (props.right_hand_icon) {
-        icon = (
-            <div style={{ position: "absolute", top: "0px", right: "0px" }}>
-                {props.right_hand_icon}
-            </div>
-        );
+        icon = <div style={{ position: "absolute", top: "0px", right: "0px" }}>{props.right_hand_icon}</div>;
     }
 
     return (

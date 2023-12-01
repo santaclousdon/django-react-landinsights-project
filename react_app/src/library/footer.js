@@ -18,45 +18,25 @@ Coded by www.creative-tim.com
 // @mui material components
 import Grid from "@mui/material/Grid";
 
-// Soft UI Dashboard PRO React components
-import SoftBox from "components/SoftBox";
-import SoftTypography from "components/SoftTypography";
-
 function Footer() {
     return (
-        <SoftBox component="footer" py={6}>
+        <div>
             <Grid container justifyContent="center">
                 <Grid item xs={10} lg={8}>
-                    <SoftBox display="flex" justifyContent="center" flexWrap="wrap" mb={3}>
-                        <SoftBox mr={{ xs: 2, lg: 3, xl: 6 }}>
-                            <SoftTypography
-                                component="a"
-                                href="#"
-                                variant="body2"
-                                color="secondary"
-                            >
-                                Company
-                            </SoftTypography>
-                        </SoftBox>
-                        <SoftBox mr={{ xs: 2, lg: 3, xl: 6 }}>
-                            <SoftTypography
-                                component="a"
-                                href="#"
-                                variant="body2"
-                                color="secondary"
-                            >
-                                About Us
-                            </SoftTypography>
-                        </SoftBox>
-                    </SoftBox>
+                    <div>
+                        <div>
+                            <div>Company</div>
+                        </div>
+                        <div>
+                            <div>About Us</div>
+                        </div>
+                    </div>
                 </Grid>
                 <Grid item xs={12} lg={8} sx={{ textAlign: "center" }}>
-                    <SoftTypography variant="body2" color="secondary">
-                        Copyright &copy; 2023
-                    </SoftTypography>
+                    <div>Copyright &copy; 2023</div>
                 </Grid>
             </Grid>
-        </SoftBox>
+        </div>
     );
 }
 

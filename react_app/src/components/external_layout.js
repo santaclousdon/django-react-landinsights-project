@@ -1,57 +1,28 @@
-/**
-=========================================================
-* Soft UI Dashboard PRO React - v4.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-pro-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// Copied from ./layouts/authentication/components/BasicLayout
-
-// prop-types is a library for typechecking of props
-import PropTypes from "prop-types";
+import React, { Component } from "react";
+import { Outlet } from "react-router-dom";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
 
-import Navbar from "components/navbar";
-import Footer from "components/footer";
+import { Navbar, Footer } from "library";
 
-class Wrapper extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+export default class ExternalLayout extends Component {
     render() {
+        let title = this.props.title;
+        let description = this.props.description;
+        let image = this.props.image;
+
         return (
             <div>
                 <Navbar
-                    routes={pageRoutes}
-                    action={{
-                        type: "external",
-                        route: "/login",
-                        label: "login",
-                    }}
-                    transparent
-                    light
+                //routes={routes}
                 />
-
                 <div
                     style={{
                         width: "calc(100% - 2rem)",
                         minHeight: "50vh",
                         borderRadius: "0.75rem",
-                        backgroundImage: ({
-                            functions: { linearGradient, rgba },
-                            palette: { gradients },
-                        }) =>
+                        backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
                             image &&
                             `${linearGradient(
                                 rgba(gradients.dark.main, 0.6),
@@ -62,12 +33,7 @@ class Wrapper extends Component {
                         backgroundRepeat: "no-repeat",
                     }}
                 >
-                    <Grid
-                        container
-                        spacing={3}
-                        justifyContent="center"
-                        sx={{ textAlign: "center" }}
-                    >
+                    <Grid container spacing={3} justifyContent="center" sx={{ textAlign: "center" }}>
                         <Grid item xs={10} lg={4}>
                             <div>
                                 <h1 style={{ color: "white", fontWeight: "bold" }}>{title}</h1>
@@ -87,7 +53,10 @@ class Wrapper extends Component {
                 >
                     <Grid container spacing={1} justifyContent="center">
                         <Grid item xs={11} sm={9} md={5} lg={4} xl={3}>
-                            {children}
+                            {/* An <Outlet> renders whatever child route is currently active,
+                                so you can think about this <Outlet> as a placeholder for
+                                the child routes we defined above. */}
+                            <Outlet />
                         </Grid>
                     </Grid>
                 </div>
@@ -97,5 +66,3 @@ class Wrapper extends Component {
         );
     }
 }
-
-export default Wrapper;

@@ -48,7 +48,7 @@ function ajax_wrapper(type, url, data, returnFunc) {
                 }
             },
             408(value) {
-                var value = { error: "Request Timed Out" };
+                value = { error: "Request Timed Out" };
                 returnFunc(value);
             },
         },

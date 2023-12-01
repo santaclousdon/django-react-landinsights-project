@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 
-import { get_children, get_all_children } from "functions";
+import { get_children, get_all_children, is_valid_react_child } from "functions";
 
-import ajaxWrapper from "base/ajax.js";
 import { Alert, Button } from "library";
+import { ajax_wrapper } from "functions";
 
 class FormWithChildren extends Component {
     constructor(props) {
@@ -18,7 +18,7 @@ class FormWithChildren extends Component {
 
         this.get_form_defaults = this.get_form_defaults.bind(this);
 
-        this.handle_change = this.handle_change.bind(this);
+        this.handle_change_event = this.handle_change_event.bind(this);
         this.set_form_state = this.set_form_state.bind(this);
 
         this.reset_state_on_submit = this.reset_state_on_submit.bind(this);
@@ -36,7 +36,7 @@ class FormWithChildren extends Component {
     }
 
     get_form_defaults(clean) {
-        let defaults = JSON.parse(JSON.stringify(defaults));
+        let defaults = JSON.parse(JSON.stringify(this.props.defaults || {}));
         const children = get_children(this.props);
 
         Object.keys(children).forEach((index) => {
@@ -113,13 +113,7 @@ class FormWithChildren extends Component {
 
                 new_state.form_is_saving_right_now = true;
             } else if (this.props.submit_url) {
-                ajaxWrapper(
-                    "POST",
-                    this.props.submit_url,
-                    data,
-                    this.form_submit_callback,
-                    this.form_submit_failure
-                );
+                ajax_wrapper("POST", this.props.submit_url, data, this.form_submit_callback, this.form_submit_failure);
 
                 new_state.form_is_saving_right_now = true;
             }
@@ -149,24 +143,22 @@ class FormWithChildren extends Component {
     check_required_children(required, context) {
         Object.keys(context).forEach((index) => {
             const child = context[index];
-            if (window.cmState.is_valid_react_child(child)) {
+            if (is_valid_react_child(child)) {
                 const { props } = child;
 
-                if (props.required == true) {
+                if (props.required === true) {
                     if (
                         !(props.name in this.state) ||
-                        this.state[props.name] == undefined ||
+                        this.state[props.name] === undefined ||
                         this.state[props.name] === ""
                     ) {
                         let field_name = props.label;
                         // Fallback behavior in case no label was applied to the input
-                        if (!field_name || field_name == "") {
+                        if (!field_name || field_name === "") {
                             field_name = props.name;
                         }
 
-                        required.push(
-                            `The field ${field_name} must be filled out to submit the form. `
-                        );
+                        required.push(`The field ${field_name} must be filled out to submit the form. `);
                     }
                 }
 
@@ -184,8 +176,8 @@ class FormWithChildren extends Component {
     }
 
     handle_key_press(event) {
-        if (this.props.submit_on_enter != false) {
-            if (event.key == "Enter") {
+        if (this.props.submit_on_enter !== false) {
+            if (event.key === "Enter") {
                 this.form_submit();
             }
         }
@@ -196,7 +188,7 @@ class FormWithChildren extends Component {
 
         const newProps = {
             set_form_state: this.set_form_state,
-            handle_change: this.handle_change,
+            handle_change: this.handle_change_event,
             handle_key_press: this.handle_key_press,
         };
 
@@ -224,31 +216,31 @@ class FormWithChildren extends Component {
             }
 
             float = { float: "left" };
-            submit_disabled = {};
+            let submit_disabled = {};
 
             // Anti-mash behavior for form.  This will force users to wait until callback functions have completed
             // and ensure the form is submitted properly
             if (this.state.form_is_saving_right_now) {
                 classes += " disabled";
-                submit_disalbed = { disabled: "disabled" };
+                submit_disabled = { disabled: "disabled" };
             }
 
             submit_button = (
-                <button
+                <Button
                     key={"form_submit_button_key"}
                     style={float}
                     className={classes}
                     onClick={this.form_submit}
                     type="button"
-                    {...submit_disalbed}
+                    {...submit_disabled}
                 >
                     {this.props.submit_text || "Save"}
-                </button>
+                </Button>
             );
         }
 
         const failed = [];
-        if (this.state.required != []) {
+        if (this.state.required !== []) {
             Object.keys(this.state.required).forEach((i) => {
                 failed.push(<Alert type="danger" text={this.state.required[i]} />);
             });
