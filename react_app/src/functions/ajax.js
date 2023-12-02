@@ -8,7 +8,7 @@ function ajax_wrapper(type, url, data, returnFunc) {
 
     // Adding Django token for POST requests
     if (type === "POST") {
-        data.csrfmiddlewaretoken = window.secretReactVars.csrfmiddlewaretoken;
+        data.csrfmiddlewaretoken = window.secret_react_vars.csrfmiddlewaretoken;
     }
 
     if (type === "POST" || type === "PUT") {
@@ -31,7 +31,7 @@ function ajax_wrapper(type, url, data, returnFunc) {
         statusCode: {
             200(value) {
                 if (typeof value === "object" && "redirect" in value) {
-                    window.location = `${value.redirect}?redirect=${window.secretReactVars.BASE_URL}`;
+                    window.location = `${value.redirect}?redirect=${window.secret_react_vars.BASE_URL}`;
                 }
                 returnFunc(value);
             },
@@ -62,7 +62,7 @@ function refresh_token(type, url, data, responseJSON, returnFunc) {
     }
 
     let refreshData = {};
-    refreshData.csrfmiddlewaretoken = window.secretReactVars.csrfmiddlewaretoken;
+    refreshData.csrfmiddlewaretoken = window.secret_react_vars.csrfmiddlewaretoken;
 
     refreshData.refresh = "";
     if (localStorage.getItem("refresh_token")) {
@@ -122,4 +122,4 @@ function handle_error(xhr, status, error) {
     //Error Handler
 }
 
-export { ajax_wrapper, save_token };
+export { ajax_wrapper, save_token, clear_token };

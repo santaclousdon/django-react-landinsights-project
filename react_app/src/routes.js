@@ -1,6 +1,6 @@
 import { ExternalLayout, InternalLayout } from "components";
 
-import { Landing, Login } from "pages";
+import { Landing, Login, Logout } from "pages";
 
 const routes = [
     {
@@ -15,6 +15,10 @@ const routes = [
             {
                 path: "login",
                 element: <Login />,
+            },
+            {
+                path: "logout",
+                element: <Logout />,
             },
         ],
     },

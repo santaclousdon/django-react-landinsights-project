@@ -32,7 +32,7 @@ export default function TextInput(props) {
             value={value}
             placeholder={props.placeholder}
             autoComplete={props.autocomplete}
-            onChange={props.handlechange}
+            onChange={props.handle_change}
         />
     );
 

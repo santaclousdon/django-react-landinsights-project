@@ -240,7 +240,7 @@ class FormWithChildren extends Component {
         }
 
         const failed = [];
-        if (this.state.required !== []) {
+        if (this.state.required != []) {
             Object.keys(this.state.required).forEach((i) => {
                 failed.push(<Alert type="danger" text={this.state.required[i]} />);
             });

@@ -1,4 +1,7 @@
-import { Wrapper, Form, TextInput, Button } from "library";
+import React, { Component } from "react";
+
+import { Form, TextInput } from "library";
+import { ajax_wrapper, save_token } from "functions";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -7,23 +10,39 @@ import Card from "@mui/material/Card";
 //import curved9 from "assets/images/curved-images/curved9.jpg";
 const curved9 = null;
 
-function Login() {
-    return (
-        <Card>
-            <div style={{ textAlign: "center" }}>
-                <h5>Sign in</h5>
-            </div>
-            <div>
-                <Form>
-                    <TextInput type="email" placeholder="Email" />
-                    <TextInput type="password" placeholder="Password" />
-                    <Button type="info" full_width>
-                        sign in
-                    </Button>
-                </Form>
-            </div>
-        </Card>
-    );
-}
+export default class Login extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { error: "" };
 
-export default Login;
+        this.login = this.login.bind(this);
+    }
+
+    login(state) {
+        let data = {
+            email: state["email"],
+            password: state["password"],
+        };
+        ajax_wrapper("POST", "/user/token/", data, this.login_callback);
+    }
+
+    login_callback(value) {
+        save_token(value);
+    }
+
+    render() {
+        return (
+            <Card>
+                <div style={{ textAlign: "center" }}>
+                    <h5>Sign in</h5>
+                </div>
+                <div>
+                    <Form submit={this.login}>
+                        <TextInput name="email" placeholder="Email" />
+                        <TextInput name="password" placeholder="Password" />
+                    </Form>
+                </div>
+            </Card>
+        );
+    }
+}
