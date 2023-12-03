@@ -1,6 +1,6 @@
 import { ExternalLayout, InternalLayout } from "components";
 
-import { Landing, Login, Logout } from "pages";
+import { Landing, Login, Logout, Dashboard } from "pages";
 
 const routes = [
     {
@@ -19,6 +19,17 @@ const routes = [
             {
                 path: "logout",
                 element: <Logout />,
+            },
+        ],
+    },
+    {
+        path: "/home",
+        element: <InternalLayout />,
+        children: [
+            {
+                index: true,
+                path: "",
+                element: <Dashboard />,
             },
         ],
     },
