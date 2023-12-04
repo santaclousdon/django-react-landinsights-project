@@ -1,42 +1,26 @@
-/**
-=========================================================
-* Soft UI Dashboard PRO React - v4.0.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard-pro-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// Copied from ./layouts/authentication/components/Footer
-
-// @mui material components
-import Grid from "@mui/material/Grid";
-
 function Footer() {
     return (
-        <div>
-            <Grid container justifyContent="center">
-                <Grid item xs={10} lg={8}>
-                    <div>
-                        <div>
-                            <div>Company</div>
-                        </div>
-                        <div>
-                            <div>About Us</div>
-                        </div>
+        <footer class="footer py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mb-4 mx-auto text-center">
+                        <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
+                            Company
+                        </a>
+                        <a href="javascript:;" target="_blank" class="text-secondary me-xl-5 me-3 mb-sm-0 mb-2">
+                            About Us
+                        </a>
                     </div>
-                </Grid>
-                <Grid item xs={12} lg={8} sx={{ textAlign: "center" }}>
-                    <div>Copyright &copy; 2023</div>
-                </Grid>
-            </Grid>
-        </div>
+                </div>
+                <div class="row">
+                    <div class="col-8 mx-auto text-center mt-1">
+                        <p class="mb-0 text-secondary">
+                            Copyright ©<script>document.write(new Date().getFullYear());</script>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     );
 }
 
