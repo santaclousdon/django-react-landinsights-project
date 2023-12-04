@@ -1,14 +1,7 @@
 import React, { Component } from "react";
 
-import { Form, TextInput } from "library";
+import { Form, TextInput, Card } from "library";
 import { ajax_wrapper, save_token } from "functions";
-
-// @mui material components
-import Card from "@mui/material/Card";
-
-// Images
-//import curved9 from "assets/images/curved-images/curved9.jpg";
-const curved9 = null;
 
 export default class Login extends Component {
     constructor(props) {
@@ -33,11 +26,15 @@ export default class Login extends Component {
     render() {
         return (
             <Card>
-                <div style={{ textAlign: "center" }}>
+                <div className="card-header text-center pt-4">
                     <h5>Sign in</h5>
                 </div>
-                <div>
-                    <Form submit={this.login}>
+                <div className="card-body">
+                    <Form
+                        submit={this.login}
+                        submit_button_type="gradient-info"
+                        submit_button_class={"w-100 my-4 mb-2"}
+                    >
                         <TextInput name="email" placeholder="Email" />
                         <TextInput name="password" placeholder="Password" />
                     </Form>

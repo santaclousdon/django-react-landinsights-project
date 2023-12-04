@@ -210,10 +210,7 @@ class FormWithChildren extends Component {
         let submit_button = null;
         let float;
         if (this.props.submitUrl || this.props.submit) {
-            let classes = "btn btn-primary";
-            if (this.props.submit_button_type) {
-                classes = `btn btn-${this.props.submit_button_type}`;
-            }
+            let submit_button_type = this.props.submit_button_type || "primary";
 
             float = { float: "left" };
             let submit_disabled = {};
@@ -221,7 +218,6 @@ class FormWithChildren extends Component {
             // Anti-mash behavior for form.  This will force users to wait until callback functions have completed
             // and ensure the form is submitted properly
             if (this.state.form_is_saving_right_now) {
-                classes += " disabled";
                 submit_disabled = { disabled: "disabled" };
             }
 
@@ -229,9 +225,9 @@ class FormWithChildren extends Component {
                 <Button
                     key={"form_submit_button_key"}
                     style={float}
-                    className={classes}
                     onClick={this.form_submit}
-                    type="button"
+                    type={submit_button_type}
+                    className={this.props.submit_button_class || ""}
                     {...submit_disabled}
                 >
                     {this.props.submit_text || "Save"}

@@ -31,7 +31,7 @@ class Button extends React.Component {
     }
 
     render() {
-        const type = `btn-${this.props.type}`;
+        const type = `bg-${this.props.type}`;
 
         let style = Object.assign({}, this.props.style || {});
 
@@ -43,7 +43,13 @@ class Button extends React.Component {
         }
 
         return (
-            <button className={`btn ${type}`} onClick={this.click} style={style} {...disabled} type="button">
+            <button
+                className={`btn ${type} ` + (this.props.className || "")}
+                onClick={this.click}
+                style={style}
+                {...disabled}
+                type="button"
+            >
                 {this.props.children}
             </button>
         );

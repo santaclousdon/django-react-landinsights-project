@@ -15,7 +15,9 @@ const router = createBrowserRouter(routes);
 // Initializing React DOM management
 ReactDOM.createRoot(document.getElementById("root")).render(<RouterProvider router={router} />);
 
-window.secret_react_vars = {};
+if (!window.secret_react_vars) {
+    window.secret_react_vars = {};
+}
 function save_csrf(value) {
     window.secret_react_vars["csrfmiddlewaretoken"] = value["csrfmiddlewaretoken"];
 }
