@@ -11,11 +11,20 @@ export default class Dashboard extends Component {
     render() {
         return (
             <div>
-                <div>
-                    <MapboxMap style={{ minHeight: "500px" }} />
+                <div className="card mb-5">
+                    <div className="card-header">
+                        <MapboxMap style={{ minHeight: "500px" }} />
+                    </div>
+                    <div className="card-body"></div>
                 </div>
-                <div>
-                    <AGGrid />
+                <div className="card">
+                    <div className="card-header">
+                        <h5>County Market Data</h5>
+                        <p>Make the best market choices through our aggregated Redfin and Zillow dataset!</p>
+                    </div>
+                    <div className="card-body">
+                        <AGGrid />
+                    </div>
                 </div>
             </div>
         );

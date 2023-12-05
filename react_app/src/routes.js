@@ -25,7 +25,7 @@ const routes = [
                 element: <Landing />,
                 loader: async ({ request, params }) => {
                     return set_page_details(
-                        "Welcome to Land Trader",
+                        "Welcome to Land Insights",
                         "/static/template_assets/img/curved-images/curved9.jpg"
                     );
                 },
@@ -35,7 +35,7 @@ const routes = [
                 element: <Login />,
                 loader: async ({ request, params }) => {
                     return set_page_details(
-                        "Welcome to Land Trader",
+                        "Welcome to Land Insights",
                         "Login Here",
                         "/static/template_assets/img/curved-images/curved9.jpg"
                     );

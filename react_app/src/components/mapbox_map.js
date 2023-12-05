@@ -41,9 +41,9 @@ export default class App extends React.PureComponent {
     render() {
         return (
             <div style={this.props.container_style}>
-                <div className="map-data-sidebar">
+                {/*<div className="map-data-sidebar">
                     Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom: {this.state.zoom}
-                </div>
+                </div> */}
                 <div ref={this.mapContainer} className="map-container" style={this.props.style} />
             </div>
         );
