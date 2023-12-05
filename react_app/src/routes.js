@@ -25,7 +25,8 @@ const routes = [
                 element: <Landing />,
                 loader: async ({ request, params }) => {
                     return set_page_details(
-                        "Welcome to Land Insights",
+                        "Land Insights",
+                        "Landing Page Goes Here",
                         "/static/template_assets/img/curved-images/curved9.jpg"
                     );
                 },

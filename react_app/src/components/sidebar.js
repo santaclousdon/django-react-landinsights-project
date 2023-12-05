@@ -1,6 +1,58 @@
 import React, { Component } from "react";
 
+class NavItem extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { open: false };
+    }
+
+    render() {
+        let drop_class = "collapse";
+        if (this.state.open) {
+            drop_class = "show collapse";
+        }
+
+        return (
+            <li className="nav-item">
+                <a
+                    className="nav-link active"
+                    data-bs-toggle="collapse"
+                    onClick={() => this.setState({ open: !this.state.open })}
+                >
+                    <div className="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center me-2">
+                        <i
+                            className="fas fa-search"
+                            aria-hidden="true"
+                            style={{
+                                opacity: 1,
+                                fontSize: "14px",
+                                position: "relative",
+                                top: "0px",
+                                left: "0px",
+                            }}
+                        ></i>
+                    </div>
+                    <span className="nav-link-text ms-1">Market Research</span>
+                </a>
+                <div className={drop_class}>
+                    <ul className="nav ms-4 ps-3">
+                        <li className="nav-item">
+                            <a className="nav-link active mt-3" href="/home">
+                                <span className="sidenav-normal"> Market Data </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        );
+    }
+}
 export default class Sidebar extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { error: "" };
+    }
+
     render() {
         return (
             <aside
@@ -20,40 +72,7 @@ export default class Sidebar extends Component {
 
                 <div className="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
                     <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <a
-                                data-bs-toggle="collapse"
-                                href="#pagesExamples"
-                                className="nav-link active"
-                                aria-controls="pagesExamples"
-                                role="button"
-                                aria-expanded="false"
-                            >
-                                <div className="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center me-2">
-                                    <i
-                                        className="fas fa-search"
-                                        aria-hidden="true"
-                                        style={{
-                                            opacity: 1,
-                                            fontSize: "14px",
-                                            position: "relative",
-                                            top: "0px",
-                                            left: "0px",
-                                        }}
-                                    ></i>
-                                </div>
-                                <span className="nav-link-text ms-1">Market Research</span>
-                            </a>
-                            <div className="collapse" id="pagesExamples">
-                                <ul className="nav ms-4 ps-3">
-                                    <li className="nav-item">
-                                        <a className="nav-link active mt-3" href="/home">
-                                            <span className="sidenav-normal"> Market Data </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
+                        <NavItem />
                     </ul>
                 </div>
                 <div className="sidenav-footer mx-3 mt-3 pt-3"></div>

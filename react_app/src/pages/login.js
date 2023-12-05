@@ -21,6 +21,8 @@ export default class Login extends Component {
 
     login_callback(value) {
         save_token(value);
+
+        window.location = "/home";
     }
 
     render() {
