@@ -150,6 +150,7 @@ CORS_ALLOW_CREDENTIALS = True
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 STATIC_ROOT = BASE_DIR + '/static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "react_app/build/static"),
