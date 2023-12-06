@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -147,14 +148,16 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
-STATIC_ROOT = BASE_DIR + '/static/'
+STATIC_ROOT = PROJECT_ROOT + '/staticfiles/'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "react_app/build/static"),
+    os.path.join(PROJECT_ROOT, "react_app/build/static"),
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 import django_heroku
 django_heroku.settings(locals())
