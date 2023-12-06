@@ -14,10 +14,3 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "home.settings")
 
 application = get_wsgi_application()
-
-from whitenoise import WhiteNoise
-
-PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
-STATIC_ROOT = PROJECT_ROOT + '/staticfiles'
-
-application = WhiteNoise(application, root=STATIC_ROOT)

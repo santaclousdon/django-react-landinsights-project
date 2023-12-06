@@ -16227,4 +16227,3 @@ am4internal_webpackJsonp(["fcaa"], {
     window.am4geodata_worldLow = r
   }
 }, ["ATzU"]);
-//# sourceMappingURL=worldLow.js.map

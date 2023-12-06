@@ -148,16 +148,11 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
-
-STATIC_ROOT = PROJECT_ROOT + '/static/'
-STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, "react_app/build/static"),
+    os.path.join(BASE_DIR, "react_app/build/static"),
 ]
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 import django_heroku
 django_heroku.settings(locals())
