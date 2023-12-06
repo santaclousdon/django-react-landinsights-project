@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -144,3 +145,11 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+STATIC_ROOT = BASE_DIR + '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "react_app/build/static"),
+]
