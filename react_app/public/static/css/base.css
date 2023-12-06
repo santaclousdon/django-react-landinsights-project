@@ -6,3 +6,39 @@ body {
 .App {
     text-align: center;
 }
+
+.height-animate {
+    transform: scaleY(0);
+    transition: 0.3s ease;
+}
+.height-animate.show {
+    transform: scaleY(1);
+}
+
+.navbar-vertical .navbar-nav > .nav-item .inner-nav .nav-link {
+    color: #344767;
+    background-color: #fff;
+    position: relative;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.navbar-vertical .navbar-nav > .nav-item .inner-nav .nav-link:before {
+    content: "";
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    transform: translate(0, -50%);
+    height: 5px;
+    width: 5px;
+    border-radius: 1.5rem;
+    background: rgba(58, 65, 111, 0.5);
+}
+
+.btn-group .btn {
+    box-shadow: none;
+    margin-bottom: 0px;
+}
+.btn-group {
+    box-shadow: 0 4px 7px -1px rgba(0, 0, 0, 0.11), 0 2px 4px -1px rgba(0, 0, 0, 0.07);
+}

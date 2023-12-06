@@ -7,9 +7,9 @@ class NavItem extends Component {
     }
 
     render() {
-        let drop_class = "collapse";
+        let drop_class = "inner-nav height-animate";
         if (this.state.open) {
-            drop_class = "show collapse";
+            drop_class = "inner-nav height-animate show";
         }
 
         return (
@@ -37,7 +37,7 @@ class NavItem extends Component {
                 <div className={drop_class}>
                     <ul className="nav ms-4 ps-3">
                         <li className="nav-item">
-                            <a className="nav-link active mt-3" href="/home">
+                            <a className="nav-link mt-3" href="/home">
                                 <span className="sidenav-normal"> Market Data </span>
                             </a>
                         </li>
@@ -70,7 +70,7 @@ export default class Sidebar extends Component {
                 </div>
                 <hr className="horizontal dark mt-0" />
 
-                <div className="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
+                <div className="collapse navbar-collapse w-auto h-auto" style={{ paddingBottom: "50px" }}>
                     <ul className="navbar-nav">
                         <NavItem />
                     </ul>
