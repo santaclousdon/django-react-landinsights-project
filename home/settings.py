@@ -150,7 +150,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
-STATIC_ROOT = PROJECT_ROOT + '/staticfiles/'
+STATIC_ROOT = PROJECT_ROOT + '/static/'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
