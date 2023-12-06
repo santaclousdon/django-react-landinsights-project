@@ -151,5 +151,5 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 STATIC_ROOT = BASE_DIR + '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "react_app/build/static"),
+    os.path.join(BASE_DIR, "react_app/build/static"),
 ]
