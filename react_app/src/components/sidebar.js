@@ -38,7 +38,15 @@ class NavItem extends Component {
                     <ul className="nav ms-4 ps-3">
                         <li className="nav-item">
                             <a className="nav-link mt-3" href="/home">
-                                <span className="sidenav-normal"> Market Data </span>
+                                <span className="sidenav-normal"> Market Data</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul className="nav ms-4 ps-3">
+                        <li className="nav-item">
+                            <a className="nav-link mt-3" href="#">
+                                <span className="sidenav-normal"> Saved Filters</span>
                             </a>
                         </li>
                     </ul>

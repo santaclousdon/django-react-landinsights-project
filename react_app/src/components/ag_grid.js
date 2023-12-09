@@ -28,6 +28,7 @@ class TrackButton extends Component {
     }
 }
 export default class AGGrid extends Component {
+    
     constructor(props) {
         super(props);
 
@@ -64,7 +65,7 @@ export default class AGGrid extends Component {
         const gridOptions = {
             autoSizeStrategy: {
                 type: "fitGridWidth",
-                defaultMinWidth: 100,
+                defaultMinWidth: 120,
             },
         };
 

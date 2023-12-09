@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch React App",
+            "url": "http://0.0.0.0:3000/home",
+            "webRoot": "${workspaceFolder}/workspaces/LandInsights/react_app",
+            "preLaunchTask": "Start React Server"
+        },
+        {
+            "name": "Launch Django App",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/django_app",
+            "program": "${workspaceFolder}/django_app/manage.py",
+            "args": [
+                "runserver",
+                "--noreload",
+                "--nothreading"
+            ],
+            "django": true
+        }
+    ]
+}
