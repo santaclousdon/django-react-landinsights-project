@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch React App",
+            "url": "http://0.0.0.0:3000",
+            "webRoot": "${workspaceFolder}/workspaces/LandInsights/react_app",
+            "preLaunchTask": "Start React Server"
+        }
+    ]
+}
