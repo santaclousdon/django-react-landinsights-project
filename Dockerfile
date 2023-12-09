@@ -14,7 +14,9 @@ COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
 # install npm
-RUN apt-get update && apt-get install -y npm
+RUN apt-get update && apt-get install -y npm curl
+
+RUN curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
 # run npm install inside of /workspaces/LandInsights/react_app
 

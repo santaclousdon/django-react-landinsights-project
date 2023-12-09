@@ -13,8 +13,8 @@
             "name": "Launch Django App",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/django_app",
-            "program": "${workspaceFolder}/django_app/manage.py",
+            // "cwd": "${workspaceFolder}/django_app",
+            "program": "manage.py",
             "args": [
                 "runserver",
                 "--noreload",

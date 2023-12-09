@@ -36,7 +36,7 @@ export default class Dashboard extends Component {
                                     <h6>Level</h6>
                                 </div>
                                 <div style={{ display: "inline-block" }}>
-                                    <ToggleGroup options={["State", "County", "ZIP"]} />
+                                    <ToggleGroup options={["State", "County", "ZIP", "TEST"]} />
                                 </div>
                             </div>
                         </div>
