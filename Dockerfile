@@ -9,12 +9,11 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
+RUN apt-get update && apt install -y libpq-dev npm curl
+
 # Install pip requirements
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
-
-# install npm
-RUN apt-get update && apt-get install -y npm curl
 
 RUN curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
