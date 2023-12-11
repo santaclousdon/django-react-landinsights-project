@@ -1,6 +1,6 @@
 import { ExternalLayout, InternalLayout } from "components";
 
-import { Landing, Login, Logout, Dashboard } from "pages";
+import { Landing, Login, Logout, Dashboard, SavedFilters, Campaigns } from "pages";
 
 function set_page_details(title, description, image) {
     if (!window.secret_react_vars) {
@@ -63,6 +63,18 @@ const routes = [
                 index: true,
                 path: "",
                 element: <Dashboard />,
+            },
+            {
+                path: "my_markets",
+                element: <Dashboard saved_markets={true} />,
+            },
+            {
+                path: "saved_filters",
+                element: <SavedFilters />,
+            },
+            {
+                path: "campaigns",
+                element: <Campaigns />,
             },
         ],
     },
