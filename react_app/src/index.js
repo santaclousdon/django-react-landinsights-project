@@ -7,7 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { ajax_wrapper } from "functions";
 
-import routes from "./routes";
+import routes from "./routes/all";
 
 // Load routes into browser
 const router = createBrowserRouter(routes);

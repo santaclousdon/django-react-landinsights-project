@@ -1,6 +1,6 @@
-import { ExternalLayout, InternalLayout } from "components";
+import { ExternalLayout } from "components";
 
-import { Landing, Login, Logout, Dashboard, SavedFilters, Campaigns } from "pages";
+import { Landing, Login, Logout } from "pages";
 
 function set_page_details(title, description, image) {
     if (!window.secret_react_vars) {
@@ -52,29 +52,6 @@ const routes = [
                         "/static/template_assets/img/curved-images/curved9.jpg"
                     );
                 },
-            },
-        ],
-    },
-    {
-        path: "/home",
-        element: <InternalLayout />,
-        children: [
-            {
-                index: true,
-                path: "",
-                element: <Dashboard />,
-            },
-            {
-                path: "my_markets",
-                element: <Dashboard saved_markets={true} />,
-            },
-            {
-                path: "saved_filters",
-                element: <SavedFilters />,
-            },
-            {
-                path: "campaigns",
-                element: <Campaigns />,
             },
         ],
     },
