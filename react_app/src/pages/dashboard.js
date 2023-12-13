@@ -4,6 +4,7 @@ import { MapboxMap, AGGrid, ToggleGroup } from "components";
 import { Button } from "library";
 
 import COUNTY_DATA from "../data/county_metrics.js";
+import { ajax_wrapper } from "functions/ajax.js";
 
 class TrackButton extends Component {
     constructor(props) {
@@ -25,7 +26,17 @@ class TrackButton extends Component {
 export default class Dashboard extends Component {
     constructor(props) {
         super(props);
-        this.state = { error: "" };
+        this.state = {
+            error: "",
+            map_filter_data: {},
+            map_regions: [],
+        };
+    }
+
+    componentDidMount() {
+        ajax_wrapper("POST", "/get_map_regions/", this.state.map_filter_data, (value) =>
+            this.setState({ map_regions: value })
+        );
     }
 
     render() {
@@ -56,7 +67,7 @@ export default class Dashboard extends Component {
             <div>
                 <div className="card mb-5">
                     <div className="card-header">
-                        <MapboxMap style={{ minHeight: "500px" }} />
+                        <MapboxMap style={{ minHeight: "500px" }} data={this.state.map_regions} />
                     </div>
                     <div className="card-body">
                         <div className="row">

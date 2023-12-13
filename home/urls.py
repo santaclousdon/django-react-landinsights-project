@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from django.urls import include, path, re_path
-from home.views import Index
+from home.views import Index, GetMapRegions
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -16,6 +16,9 @@ urlpatterns = [
     #
     # User views
     path("user/", include("user.urls")),
+
+    
+    path("get_map_regions/", GetMapRegions, name='GetMapRegions'),
 
     #
     # Catch statements for React
