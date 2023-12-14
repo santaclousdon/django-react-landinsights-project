@@ -12,7 +12,7 @@ function random_rgba() {
     var o = Math.round,
         r = Math.random,
         s = 255;
-    return "rgba(" + o(r() * s) + "," + o(r() * s) + "," + o(r() * s) + "," + r().toFixed(1) + ")";
+    return "rgba(" + o(r() * s) + "," + o(r() * s) + "," + o(r() * s) + ",1)";
 }
 
 export default class App extends React.PureComponent {
@@ -25,6 +25,7 @@ export default class App extends React.PureComponent {
             zoom: 9,
 
             map_object: null,
+            current_layers: [],
         };
 
         this.mapContainer = React.createRef();
@@ -64,15 +65,31 @@ export default class App extends React.PureComponent {
         });
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.props.data_timestamp != prevProps.data_timestamp) {
+            this.check_data();
+        }
+    }
+
     check_data() {
         if (!this.state.loaded) {
             return false;
         }
 
         if (this.props.data) {
-            for (let item of this.props.data["features"]) {
-                this.add_polygon(item["properties"]["NAME"], item);
+            for (let id of this.state.current_layers) {
+                this.state.map_object.removeLayer(id);
+                this.state.map_object.removeLayer(`${id}_outline`);
             }
+
+            let current_layers = [];
+            for (let item of this.props.data["features"]) {
+                let id_string = `custom_geolayer_${item["properties"]["id"]}`;
+                this.add_polygon(id_string, item);
+                current_layers.push(id_string);
+            }
+
+            this.setState({ current_layers: current_layers });
         }
     }
 
