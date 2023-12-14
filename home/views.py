@@ -26,15 +26,31 @@ def GetMapRegions(request):
     filter_data = request.data
     pprint.pprint(filter_data)
 
-    file = open(os.path.join(settings.BASE_DIR, 'geojson_data/states.json'))
+    data_files = {
+        'State': 'geojson_data/states.json', 
+        'County': 'geojson_data/counties.json',
+        'ZIP': 'geojson_data/zips.json',
+    }
+
+    file = open(os.path.join(settings.BASE_DIR, data_files[filter_data['geo_scale']]))
 
     region_data = json.load(file)
 
     file.close()
 
-    for item in region_data['features']:
-        print(item['properties']['NAME'])
-
-        print(' ', len(item['geometry']['coordinates']))
+    response_features = []
+    for item in region_data['features'][:100]:
+        if filter_data['geo_scale'] == 'State':
+            item['properties']['id'] = item['properties']['STATE']
+        elif filter_data['geo_scale'] == 'County':
+            item['properties']['id'] = '%s_%s' % (item['properties']['STATE'], item['properties']['COUNTY'])
+        elif filter_data['geo_scale'] == 'ZIP':
+            item['properties']['id'] = '%s_%s' % (item['properties']['STATEFP10'], item['properties']['ZCTA5CE10'])
+        
+        response_features.append(item)
+        #print(item['properties']['NAME'])
+        #print(' ', len(item['geometry']['coordinates']))
+        
+    region_data['features'] = response_features
 
     return JsonResponse(region_data)
