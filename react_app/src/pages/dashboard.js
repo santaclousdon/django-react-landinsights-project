@@ -6,6 +6,8 @@ import { Button } from "library";
 import COUNTY_DATA from "../data/county_metrics.js";
 import { ajax_wrapper } from "functions/ajax.js";
 
+const TIME_SCALES = ["1 Months", "3 Months", "6 Months", "1 Year"];
+const GEO_SCALES = ["State", "County", "ZIP"];
 class TrackButton extends Component {
     constructor(props) {
         super(props);
@@ -28,15 +30,44 @@ export default class Dashboard extends Component {
         super(props);
         this.state = {
             error: "",
-            map_filter_data: {},
+            map_filter_data: {
+                geo_scale: GEO_SCALES[0],
+                time_scale: TIME_SCALES[0],
+            },
             map_regions: [],
         };
+
+        this.get_map_regions = this.get_map_regions.bind(this);
+        this.change_scope = this.change_scope.bind(this);
     }
 
     componentDidMount() {
-        ajax_wrapper("POST", "/get_map_regions/", this.state.map_filter_data, (value) =>
-            this.setState({ map_regions: value })
+        this.get_map_regions();
+    }
+
+    get_map_regions() {
+        let data = Object.assign({}, this.state.map_filter_data);
+        if (!data["geo_scale"] || !data["time_scale"]) {
+            return false;
+        }
+
+        ajax_wrapper("POST", "/get_map_regions/", data, (value) =>
+            this.setState({ map_regions: value, data_timestamp: Date.now() })
         );
+    }
+
+    change_scope(group, name) {
+        let filter_data = this.state.map_filter_data;
+
+        if (filter_data[group] != name) {
+            filter_data[group] = name;
+            this.setState(
+                {
+                    map_filter_data: filter_data,
+                },
+                this.get_map_regions
+            );
+        }
     }
 
     render() {
@@ -67,7 +98,11 @@ export default class Dashboard extends Component {
             <div>
                 <div className="card mb-5">
                     <div className="card-header">
-                        <MapboxMap style={{ minHeight: "500px" }} data={this.state.map_regions} />
+                        <MapboxMap
+                            style={{ minHeight: "500px" }}
+                            data={this.state.map_regions}
+                            data_timestamp={this.state.data_timestamp}
+                        />
                     </div>
                     <div className="card-body">
                         <div className="row">
@@ -76,7 +111,11 @@ export default class Dashboard extends Component {
                                     <h6>Timeframe</h6>
                                 </div>
                                 <div style={{ display: "inline-block" }}>
-                                    <ToggleGroup options={["1 Months", "3 Months", "6 Months", "1 Year"]} />
+                                    <ToggleGroup
+                                        group_name="time_scale"
+                                        on_change={this.change_scope}
+                                        options={TIME_SCALES}
+                                    />
                                 </div>
                             </div>
                             <div className="col-5">
@@ -84,7 +123,11 @@ export default class Dashboard extends Component {
                                     <h6>Level</h6>
                                 </div>
                                 <div style={{ display: "inline-block" }}>
-                                    <ToggleGroup options={["State", "County", "ZIP", "TEST"]} />
+                                    <ToggleGroup
+                                        group_name="geo_scale"
+                                        on_change={this.change_scope}
+                                        options={GEO_SCALES}
+                                    />
                                 </div>
                             </div>
                         </div>

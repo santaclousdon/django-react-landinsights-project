@@ -37,24 +37,28 @@ export default class ToggleGroup extends Component {
         super(props);
 
         this.state = {
-            active: this.props.options[0],
+            active: "",
         };
+
+        this.on_change = this.on_change.bind(this);
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        this.on_change(this.props.options[0]);
+    }
+
+    on_change(name) {
+        this.setState({ active: name });
+
+        this.props.on_change(this.props.group_name, name);
+    }
 
     render() {
         let options = this.props.options;
 
         let buttons = [];
         for (let item of options) {
-            buttons.push(
-                <ToggleButton
-                    name={item}
-                    current={this.state.active}
-                    set_active={(name) => this.setState({ active: name })}
-                />
-            );
+            buttons.push(<ToggleButton name={item} current={this.state.active} set_active={this.on_change} />);
         }
 
         return (
