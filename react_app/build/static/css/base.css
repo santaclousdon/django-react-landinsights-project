@@ -35,6 +35,13 @@ body {
     background: rgba(58, 65, 111, 0.5);
 }
 
+.navbar-vertical .navbar-nav .nav-item .nav-link .icon i {
+    color: #ccc;
+}
+.navbar-vertical .navbar-nav .nav-item .nav-link.active .icon i {
+    color: white;
+}
+
 .btn-group .btn {
     box-shadow: none;
     margin-bottom: 0px;
