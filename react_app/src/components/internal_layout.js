@@ -1,9 +1,21 @@
 import React, { Component } from "react";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 import { Sidebar, Navbar } from "components";
+import { ajax_wrapper } from "functions";
 
 export default class InternalLayout extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            loaded: false,
+        };
+    }
+
+    componentDidMount() {
+        ajax_wrapper("GET", "/user/user/", {}, (value) => this.setState({ user: value, loaded: true }));
+    }
+
     render() {
         let current_path = window.location.pathname;
         if (current_path.endsWith("/")) {

@@ -76,7 +76,7 @@ export default class App extends React.PureComponent {
             return false;
         }
 
-        if (this.props.data) {
+        if (this.props.data && this.props.data["features"]) {
             for (let id of this.state.current_layers) {
                 this.state.map_object.removeLayer(id);
                 this.state.map_object.removeLayer(`${id}_outline`);
