@@ -7,4 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 def GetUser(request):
     user = request.user
 
-    return JsonResponse({'email': user.email})
+    return JsonResponse({
+        'email': user.email,
+        'company': user.companies.first().id,
+    })

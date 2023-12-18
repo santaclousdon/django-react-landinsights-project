@@ -10,10 +10,17 @@ export default class InternalLayout extends Component {
         this.state = {
             loaded: false,
         };
+
+        this.load_user = this.load_user.bind(this);
     }
 
     componentDidMount() {
-        ajax_wrapper("GET", "/user/user/", {}, (value) => this.setState({ user: value, loaded: true }));
+        ajax_wrapper("GET", "/user/user/", {}, this.load_user);
+    }
+
+    load_user(value) {
+        this.setState({ loaded: true });
+        window.secret_react_vars["user"] = value;
     }
 
     render() {
@@ -32,7 +39,7 @@ export default class InternalLayout extends Component {
                     <Navbar current_path={current_path} current_location={current_location} />
                     <div className="container-fluid py-4">
                         <div className="row">
-                            <Outlet />
+                            <Outlet context={{ user: this.state.user }} />
                         </div>
                     </div>
                 </main>

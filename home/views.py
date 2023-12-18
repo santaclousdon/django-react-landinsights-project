@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseForbidden, JsonResponse
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
+
+from home.models import *
 
 from django.conf import settings
 import json
@@ -54,3 +56,62 @@ def GetMapRegions(request):
     region_data['features'] = response_features
 
     return JsonResponse(region_data)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def ManageMarkets(request, id=None):
+    json_response = {}
+    
+    json_response = handle_get_or_set_request(
+        request, 
+        SavedMarket, 
+        id=id,
+        many_get_relation=request.user.companies.first().markets
+    )
+
+    return JsonResponse(json_response, safe=False)
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def ManageFilters(request, id=None):
+    json_response = {}
+    
+    json_response = handle_get_or_set_request(
+        request, 
+        SavedFilters, 
+        id=id,
+        many_get_relation=request.user.companies.first().filters
+    )
+
+    return JsonResponse(json_response, safe=False)
+
+
+
+def handle_get_or_set_request(request, model, id=None, many_get_relation=None):
+    if request.method == 'GET':
+        if id:
+            object = model.objects.get(id=id)
+            json_response = object.to_json()
+        else:
+            objects = many_get_relation
+
+            json_response = []
+            for object in objects.all():
+                json_response.append(object.to_json())
+
+    elif request.method == 'POST':
+        json_data = request.data
+        pprint.pprint(json_data)
+
+        if id:
+            object = model.objects.get(id=id)
+
+        else:
+            object = model.objects.create()
+
+        object.update(**json_data)
+
+        json_response = object.to_json()
+
+    return json_response

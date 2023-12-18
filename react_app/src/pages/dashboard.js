@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { useOutletContext } from "react-router-dom";
 
 import { MapboxMap, AGGrid, ToggleGroup } from "components";
 import { Button } from "library";
@@ -15,7 +16,13 @@ class TrackButton extends Component {
         this.track_market = this.track_market.bind(this);
     }
 
-    track_market() {}
+    track_market() {
+        ajax_wrapper("POST", "/api/markets/", {
+            company: window.secret_react_vars["company"],
+            type: this.props.type,
+            gid: this.props.value,
+        });
+    }
 
     render() {
         return (
@@ -35,6 +42,7 @@ export default class Dashboard extends Component {
                 time_scale: TIME_SCALES[0],
             },
             map_regions: [],
+            markets: [],
         };
 
         this.get_map_regions = this.get_map_regions.bind(this);
@@ -43,6 +51,8 @@ export default class Dashboard extends Component {
 
     componentDidMount() {
         this.get_map_regions();
+
+        ajax_wrapper("GET", "/api/markets/", {}, (value) => this.setState({ markets: value }));
     }
 
     get_map_regions() {
@@ -77,6 +87,9 @@ export default class Dashboard extends Component {
         };
 
         let rows = COUNTY_DATA;
+        if (this.props.saved_markets) {
+            rows = this.state.markets;
+        }
 
         let columns = [
             { field: "state", filter: true },
@@ -91,7 +104,13 @@ export default class Dashboard extends Component {
             { field: "sold_90", filter: true },
             { field: "sold_180", filter: true },
             { field: "sold_360", filter: true },
-            { field: "id", cellRenderer: TrackButton },
+            {
+                field: "id",
+                cellRenderer: TrackButton,
+                cellRendererParams: {
+                    markets: this.state.markets,
+                },
+            },
         ];
 
         return (

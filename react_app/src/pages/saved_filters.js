@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import { MapboxMap, AGGrid, ToggleGroup } from "components";
 import { Button } from "library";
+import { ajax_wrapper } from "functions";
 
 class OpenButton extends Component {
     render() {
@@ -16,7 +17,14 @@ class OpenButton extends Component {
 export default class SavedFilters extends Component {
     constructor(props) {
         super(props);
-        this.state = { error: "" };
+        this.state = {
+            filters: [],
+            error: "",
+        };
+    }
+
+    componentDidMount() {
+        ajax_wrapper("GET", "/api/filters/", {}, (value) => this.setState({ filters: value }));
     }
 
     render() {
