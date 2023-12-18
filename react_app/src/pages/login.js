@@ -38,7 +38,7 @@ export default class Login extends Component {
                         submit_button_class={"w-100 my-4 mb-2"}
                     >
                         <TextInput name="email" placeholder="Email" />
-                        <TextInput name="password" placeholder="Password" />
+                        <TextInput type="password" name="password" placeholder="Password" />
                     </Form>
                 </div>
             </Card>

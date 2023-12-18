@@ -58,7 +58,7 @@ def GetMapRegions(request):
     return JsonResponse(region_data)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def ManageMarkets(request, id=None):
     json_response = {}
@@ -72,7 +72,7 @@ def ManageMarkets(request, id=None):
 
     return JsonResponse(json_response, safe=False)
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def ManageFilters(request, id=None):
     json_response = {}
@@ -89,6 +89,7 @@ def ManageFilters(request, id=None):
 
 
 def handle_get_or_set_request(request, model, id=None, many_get_relation=None):
+
     if request.method == 'GET':
         if id:
             object = model.objects.get(id=id)
@@ -102,16 +103,24 @@ def handle_get_or_set_request(request, model, id=None, many_get_relation=None):
 
     elif request.method == 'POST':
         json_data = request.data
+        del json_data['csrfmiddlewaretoken']
+        json_data['active'] = True
+
         pprint.pprint(json_data)
 
         if id:
             object = model.objects.get(id=id)
+            object.update(**json_data)
 
         else:
-            object = model.objects.create()
+            object = model.objects.create(**json_data)
 
-        object.update(**json_data)
 
         json_response = object.to_json()
+
+    elif request.method == 'DELETE':
+        object = model.objects.get(id=id)
+        object.active = False
+        object.save()
 
     return json_response

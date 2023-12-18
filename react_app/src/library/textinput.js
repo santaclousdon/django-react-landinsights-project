@@ -25,7 +25,7 @@ export default function TextInput(props) {
 
     let input = (
         <input
-            type="text"
+            type={props.type || "text"}
             className="form-control"
             name={props.name}
             style={style}

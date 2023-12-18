@@ -78,6 +78,7 @@ export default class App extends React.PureComponent {
 
         if (this.props.data && this.props.data["features"]) {
             for (let id of this.state.current_layers) {
+                this.state.map_object.removeSource(id);
                 this.state.map_object.removeLayer(id);
                 this.state.map_object.removeLayer(`${id}_outline`);
             }
@@ -98,10 +99,17 @@ export default class App extends React.PureComponent {
 
         var color = random_rgba();
 
-        map.addSource(id, {
+        let source = map.getSource(id);
+        let source_state = {
             type: "geojson",
             data: data,
-        });
+            //tiles: ["https://api.maptiler.com/tiles/countries/{z}/{x}/{y}.pbf?key=wvQLiejVxw9aoANaJwCr"],
+        };
+        if (source) {
+            source.setState(source_state);
+        } else {
+            map.addSource(id, source_state);
+        }
 
         // Add a new layer to visualize the polygon.
         map.addLayer({

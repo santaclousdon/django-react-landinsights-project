@@ -13,23 +13,66 @@ class TrackButton extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            id: null,
+        };
+
+        this.check_markets = this.check_markets.bind(this);
         this.track_market = this.track_market.bind(this);
     }
 
+    componentDidMount() {
+        this.check_markets();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.markets != prevProps.markets) {
+            this.check_markets();
+        }
+    }
+
+    check_markets() {
+        let my_market_id = null;
+        for (let item of this.props.markets) {
+            if (item["gid"] == this.props.value) {
+                my_market_id = item["id"];
+            }
+        }
+
+        this.setState({ id: my_market_id });
+    }
+
     track_market() {
-        ajax_wrapper("POST", "/api/markets/", {
-            company: window.secret_react_vars["company"],
-            type: this.props.type,
-            gid: this.props.value,
-        });
+        if (this.state.id) {
+            ajax_wrapper("DELETE", `/api/markets/${this.state.id}/`, {}, this.props.refresh_markets);
+        } else {
+            ajax_wrapper(
+                "POST",
+                "/api/markets/",
+                {
+                    company_id: window.secret_react_vars["user"]["company"],
+                    type: this.props.type,
+                    gid: this.props.value,
+                },
+                this.props.refresh_markets
+            );
+        }
     }
 
     render() {
-        return (
+        let button = (
             <Button onClick={this.track_market} type="gradient-secondary">
                 <i class="fa fa-plus"></i> Add
             </Button>
         );
+        if (this.state.id) {
+            button = (
+                <Button onClick={this.track_market} type="gradient-danger">
+                    <i class="fa fa-minus"></i> Remove
+                </Button>
+            );
+        }
+        return button;
     }
 }
 export default class Dashboard extends Component {
@@ -37,6 +80,7 @@ export default class Dashboard extends Component {
         super(props);
         this.state = {
             error: "",
+
             map_filter_data: {
                 geo_scale: GEO_SCALES[0],
                 time_scale: TIME_SCALES[0],
@@ -45,13 +89,17 @@ export default class Dashboard extends Component {
             markets: [],
         };
 
+        this.refresh_markets = this.refresh_markets.bind(this);
         this.get_map_regions = this.get_map_regions.bind(this);
         this.change_scope = this.change_scope.bind(this);
     }
 
     componentDidMount() {
+        this.refresh_markets();
         this.get_map_regions();
+    }
 
+    refresh_markets() {
         ajax_wrapper("GET", "/api/markets/", {}, (value) => this.setState({ markets: value }));
     }
 
@@ -109,9 +157,27 @@ export default class Dashboard extends Component {
                 cellRenderer: TrackButton,
                 cellRendererParams: {
                     markets: this.state.markets,
+                    type: this.state.map_filter_data["geo_scale"],
+                    refresh_markets: this.refresh_markets,
                 },
             },
         ];
+        if (this.props.saved_markets) {
+            columns = [
+                { field: "company", filter: true },
+                { field: "name", filter: true },
+                { field: "type", filter: true },
+                { field: "gid", filter: true },
+                {
+                    field: "gid",
+                    cellRenderer: TrackButton,
+                    cellRendererParams: {
+                        markets: this.state.markets,
+                        refresh_markets: this.refresh_markets,
+                    },
+                },
+            ];
+        }
 
         return (
             <div>
