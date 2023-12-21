@@ -45,8 +45,7 @@ export default class AGGrid extends Component {
 
         const gridOptions = {
             autoSizeStrategy: {
-                type: "fitGridWidth",
-                defaultMinWidth: 120,
+                type: "fitCellContents"
             },
         };
 
@@ -57,7 +56,7 @@ export default class AGGrid extends Component {
                 <AgGridReact
                     ref={this.gridRef}
                     gridOptions={gridOptions}
-                    pagination={true}
+                    pagination={false}
                     rowData={rows}
                     columnDefs={columns}
                     onFirstDataRendered={this.load_saved_filters}
