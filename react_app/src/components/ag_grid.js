@@ -10,15 +10,33 @@ export default class AGGrid extends Component {
     constructor(props) {
         super(props);
 
-        this.get_filters = this.get_filters.bind(this);
         this.gridRef = React.createRef();
+
+        this.load_saved_filters = this.load_saved_filters.bind(this);
+        this.handle_filter_change = this.handle_filter_change.bind(this);
     }
 
     componentDidMount() {}
 
-    get_filters() {
+    componentDidUpdate(prevProps) {
+        if (this.props.saved_filters != prevProps.saved_filters) {
+            this.load_saved_filters();
+        }
+    }
+
+    load_saved_filters() {
+        if (this.props.saved_filters) {
+            this.gridRef.current?.api.setFilterModel(this.props.saved_filters);
+        }
+    }
+
+    handle_filter_change() {
         let current_filters = this.gridRef.current?.api.getFilterModel();
         console.log(current_filters);
+
+        if (this.props.handle_filter_change) {
+            this.props.handle_filter_change(current_filters);
+        }
     }
 
     render() {
@@ -42,6 +60,8 @@ export default class AGGrid extends Component {
                     pagination={true}
                     rowData={rows}
                     columnDefs={columns}
+                    onFirstDataRendered={this.load_saved_filters}
+                    onFilterChanged={this.handle_filter_change}
                 />
 
                 {/*<Button type="info" onClick={this.get_filters}>

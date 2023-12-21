@@ -35,8 +35,8 @@ class Button extends React.Component {
 
         let style = Object.assign({}, this.props.style || {});
 
-        let disabled = this.props.disabled || {};
-        if (this.state.disabled) {
+        let disabled = {};
+        if (this.props.disabled || this.state.disabled) {
             disabled = {
                 disabled: "disabled",
             };

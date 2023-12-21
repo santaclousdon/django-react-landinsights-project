@@ -2,15 +2,28 @@ import React, { Component } from "react";
 
 import { MapboxMap, AGGrid, ToggleGroup } from "components";
 import { Button } from "library";
-import { ajax_wrapper } from "functions";
+import { ajax_wrapper, prettify_string } from "functions";
 
 class OpenButton extends Component {
     render() {
         return (
-            <Button href="/" type="gradient-secondary">
+            <Button href={`/home/?filter=${this.props.value}`} type="gradient-secondary">
                 <i class="fa fa-search"></i> Open Filter
             </Button>
         );
+    }
+}
+
+class JSONRender extends Component {
+    render() {
+        let fields = [];
+        for (let key in this.props.value) {
+            let item = this.props.value[key];
+            fields.push(
+                <div>{`${prettify_string(key)}: ${item["filterType"]} ${item["type"]} ${item["filter"]}`}</div>
+            );
+        }
+        return <div>{fields}</div>;
     }
 }
 
@@ -28,28 +41,11 @@ export default class SavedFilters extends Component {
     }
 
     render() {
-        let rows = [
-            {
-                state: "CO",
-                type: "County",
-                filter_name: "My First Filter",
-                description: "{Some parsed JSON}",
-                id: "1234",
-            },
-            {
-                state: "CO",
-                type: "County",
-                filter_name: "My First Filter",
-                description: "{Some parsed JSON}",
-                id: "1234",
-            },
-        ];
+        let rows = this.state.filters;
 
         let columns = [
-            { field: "state", filter: true },
-            { field: "type", filter: true },
-            { field: "filter_name", filter: true },
-            { field: "description", filter: true },
+            { field: "name", filter: true },
+            { field: "data", cellRenderer: JSONRender },
             { field: "id", cellRenderer: OpenButton },
         ];
 

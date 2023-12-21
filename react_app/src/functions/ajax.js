@@ -78,7 +78,7 @@ function refresh_token(type, url, data, responseJSON, returnFunc) {
 
     return $.ajax({
         type: "POST",
-        url: "/users/token/refresh/",
+        url: "/user/token/refresh/",
         contentType: "application/json",
         data: refreshData,
         statusCode: {
@@ -108,6 +108,7 @@ function save_token(value) {
 }
 
 function clear_token() {
+    console.log("CLEARING TOKENS");
     localStorage.removeItem("token");
     localStorage.removeItem("refresh_token");
     window.location.href = "/login/";

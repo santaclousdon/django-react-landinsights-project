@@ -22,7 +22,10 @@ class NavItem extends Component {
         );
 
         let active = "";
-        if (this.props.current == this.props.name) {
+        if (
+            this.props.current == this.props.name ||
+            (this.props.current == "" && this.props.name == "market_research")
+        ) {
             active = "active";
         }
 

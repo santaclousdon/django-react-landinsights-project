@@ -5,7 +5,7 @@ import { MapboxMap, AGGrid, ToggleGroup } from "components";
 import { Button } from "library";
 
 import COUNTY_DATA from "../data/county_metrics.js";
-import { ajax_wrapper } from "functions/ajax.js";
+import { ajax_wrapper, get_url } from "functions";
 
 const TIME_SCALES = ["1 Months", "3 Months", "6 Months", "1 Year"];
 const GEO_SCALES = ["State", "County", "ZIP"];
@@ -87,16 +87,29 @@ export default class Dashboard extends Component {
             },
             map_regions: [],
             markets: [],
+
+            filter_data: {},
+            filters_saved: false,
         };
 
         this.refresh_markets = this.refresh_markets.bind(this);
         this.get_map_regions = this.get_map_regions.bind(this);
         this.change_scope = this.change_scope.bind(this);
+
+        this.handle_filter_change = this.handle_filter_change.bind(this);
+        this.save_filters = this.save_filters.bind(this);
     }
 
     componentDidMount() {
         this.refresh_markets();
         this.get_map_regions();
+
+        let params = get_url();
+        if ("filter" in params) {
+            ajax_wrapper("GET", `/api/filters/${params["filter"]}/`, {}, (value) =>
+                this.setState({ filter_data: value["data"] })
+            );
+        }
     }
 
     refresh_markets() {
@@ -126,6 +139,30 @@ export default class Dashboard extends Component {
                 this.get_map_regions
             );
         }
+    }
+
+    handle_filter_change(data) {
+        this.setState({
+            filter_data: data,
+            filters_saved: false,
+        });
+    }
+
+    save_filters() {
+        this.setState(
+            { filters_saved: true },
+            function () {
+                ajax_wrapper(
+                    "POST",
+                    "/api/filters/",
+                    {
+                        company_id: window.secret_react_vars["user"]["company"],
+                        data: this.state.filter_data,
+                    },
+                    function () {}
+                );
+            }.bind(this)
+        );
     }
 
     render() {
@@ -179,6 +216,19 @@ export default class Dashboard extends Component {
             ];
         }
 
+        let save_filters_button = (
+            <Button onClick={this.save_filters} type="gradient-secondary">
+                {"Save Filters"}
+            </Button>
+        );
+        if (this.state.filters_saved) {
+            save_filters_button = (
+                <Button type="gradient-secondary" disabled={true}>
+                    {"Filters Saved!"}
+                </Button>
+            );
+        }
+
         return (
             <div>
                 <div className="card mb-5">
@@ -220,11 +270,17 @@ export default class Dashboard extends Component {
                 </div>
                 <div className="card">
                     <div className="card-header">
+                        <div style={{ float: "right" }}>{save_filters_button}</div>
                         <h5>County Market Data</h5>
                         <p>Make the best market choices through our aggregated Redfin and Zillow dataset!</p>
                     </div>
                     <div className="card-body">
-                        <AGGrid rows={rows} columns={columns} />
+                        <AGGrid
+                            rows={rows}
+                            columns={columns}
+                            handle_filter_change={this.handle_filter_change}
+                            saved_filters={this.state.filter_data}
+                        />
                     </div>
                 </div>
             </div>

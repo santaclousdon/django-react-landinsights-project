@@ -21,10 +21,10 @@ urlpatterns = [
     path("get_map_regions/", GetMapRegions, name='GetMapRegions'),
 
     path("api/markets/", ManageMarkets, name='ManageMarkets'),
-    path("api/markets/(?P<id>\S+)/", ManageMarkets, name='ManageMarkets'),
+    path("api/markets/<uuid:id>/", ManageMarkets, name='ManageMarkets'),
 
     path("api/filters/", ManageFilters, name='ManageFilters'),
-    path("api/filters/(?P<id>\S+)/", ManageFilters, name='ManageFilters'),
+    path("api/filters/<uuid:id>/", ManageFilters, name='ManageFilters'),
 
     #
     # Catch statements for React
