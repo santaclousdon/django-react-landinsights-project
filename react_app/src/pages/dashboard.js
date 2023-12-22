@@ -2,13 +2,15 @@ import React, { Component } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import { MapboxMap, AGGrid, ToggleGroup } from "components";
-import { Button } from "library";
+import { Button, Select } from "library";
 
-import COUNTY_DATA from "../data/county_metrics.js";
 import { ajax_wrapper, get_url } from "functions";
 
 const TIME_SCALES = ["1 Months", "3 Months", "6 Months", "1 Year"];
 const GEO_SCALES = ["State", "County", "ZIP"];
+
+const UNWANTED_FIELDS = ["id", "gid", "name", "state"];
+
 class TrackButton extends Component {
     constructor(props) {
         super(props);
@@ -84,16 +86,19 @@ export default class Dashboard extends Component {
             map_filter_data: {
                 geo_scale: GEO_SCALES[0],
                 time_scale: TIME_SCALES[0],
+                visual_field: "1 acre-2 acre : Active",
             },
-            map_regions: [],
+            region_data: [],
             markets: [],
 
             filter_data: {},
             filters_saved: false,
+
+            data_timestamp: null,
         };
 
         this.refresh_markets = this.refresh_markets.bind(this);
-        this.get_map_regions = this.get_map_regions.bind(this);
+        this.get_region_data = this.get_region_data.bind(this);
         this.change_scope = this.change_scope.bind(this);
 
         this.handle_filter_change = this.handle_filter_change.bind(this);
@@ -102,7 +107,7 @@ export default class Dashboard extends Component {
 
     componentDidMount() {
         this.refresh_markets();
-        this.get_map_regions();
+        this.get_region_data();
 
         let params = get_url();
         if ("filter" in params) {
@@ -116,14 +121,14 @@ export default class Dashboard extends Component {
         ajax_wrapper("GET", "/api/markets/", {}, (value) => this.setState({ markets: value }));
     }
 
-    get_map_regions() {
+    get_region_data() {
         let data = Object.assign({}, this.state.map_filter_data);
         if (!data["geo_scale"] || !data["time_scale"]) {
             return false;
         }
 
-        ajax_wrapper("POST", "/get_map_regions/", data, (value) =>
-            this.setState({ map_regions: value, data_timestamp: Date.now() })
+        ajax_wrapper("POST", "/get_region_data/", data, (value) =>
+            this.setState({ region_data: value, data_timestamp: Date.now() })
         );
     }
 
@@ -136,7 +141,7 @@ export default class Dashboard extends Component {
                 {
                     map_filter_data: filter_data,
                 },
-                this.get_map_regions
+                this.get_region_data
             );
         }
     }
@@ -167,13 +172,40 @@ export default class Dashboard extends Component {
 
     render() {
         let group_title_style = {
-            display: "inline-block",
+            //display: "inline-block",
             marginRight: "30px",
         };
 
-        let rows = COUNTY_DATA;
+        let rows = this.state.region_data;
+
+        let field_options = [];
+        let map_color_data = {};
         if (this.props.saved_markets) {
             rows = this.state.markets;
+        }
+
+        if (rows.length > 0) {
+            let test_row = rows[0];
+            for (let key in test_row) {
+                if (UNWANTED_FIELDS.includes(key)) {
+                    continue;
+                }
+
+                for (let point in test_row[key]) {
+                    field_options.push({
+                        text: `${key} : ${point}`,
+                        value: `${key} : ${point}`,
+                    });
+                }
+            }
+        }
+
+        let visual_field_parts = this.state.map_filter_data["visual_field"].split(" : ");
+        for (let item of rows) {
+            let value = item[visual_field_parts[0]][visual_field_parts[1]];
+            if (value > 0) {
+                map_color_data[item["gid"]] = value;
+            }
         }
 
         let columns = [
@@ -235,13 +267,14 @@ export default class Dashboard extends Component {
                     <div className="card-header">
                         <MapboxMap
                             style={{ minHeight: "500px" }}
-                            data={this.state.map_regions}
+                            map_color_data={map_color_data}
                             data_timestamp={this.state.data_timestamp}
+                            source_layer="administrative"
                         />
                     </div>
                     <div className="card-body">
                         <div className="row">
-                            <div className="col-7">
+                            <div className="col-5">
                                 <div style={group_title_style}>
                                     <h6>Timeframe</h6>
                                 </div>
@@ -253,7 +286,7 @@ export default class Dashboard extends Component {
                                     />
                                 </div>
                             </div>
-                            <div className="col-5">
+                            <div className="col-4">
                                 <div style={group_title_style}>
                                     <h6>Level</h6>
                                 </div>
@@ -262,6 +295,21 @@ export default class Dashboard extends Component {
                                         group_name="geo_scale"
                                         on_change={this.change_scope}
                                         options={GEO_SCALES}
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-3">
+                                <div style={group_title_style}>
+                                    <h6>Visualization</h6>
+                                </div>
+                                <div style={{ display: "inline-block" }}>
+                                    <Select
+                                        options={field_options}
+                                        name="visual_field"
+                                        value={this.state.map_filter_data["visual_field"]}
+                                        set_form_state={(state) =>
+                                            this.setState({ map_filter_data: state, data_timestamp: Date.now() })
+                                        }
                                     />
                                 </div>
                             </div>

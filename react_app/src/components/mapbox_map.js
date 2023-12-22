@@ -71,9 +71,9 @@ export default class App extends React.PureComponent {
         super(props);
         this.state = {
             loaded: false,
-            lng: -70.9,
-            lat: 42.35,
-            zoom: 9,
+            lng: -84.9476,
+            lat: 32.2361,
+            zoom: 7.5,
 
             map_object: null,
             current_layers: [],
@@ -81,7 +81,6 @@ export default class App extends React.PureComponent {
 
         this.mapContainer = React.createRef();
 
-        this.check_data = this.check_data.bind(this);
         this.add_polygon = this.add_polygon.bind(this);
 
         this.add_tiles = this.add_tiles.bind(this);
@@ -96,7 +95,7 @@ export default class App extends React.PureComponent {
             style: "mapbox://styles/mapbox/streets-v12",
             center: [lng, lat],
             zoom: zoom,
-            minZoom: 7,
+            minZoom: 5,
             maxZoom: 10,
         });
 
@@ -113,7 +112,7 @@ export default class App extends React.PureComponent {
                 {
                     loaded: true,
                 },
-                this.check_data
+                this.add_tiles
             );
         });
 
@@ -124,34 +123,8 @@ export default class App extends React.PureComponent {
 
     componentDidUpdate(prevProps) {
         if (this.props.data_timestamp != prevProps.data_timestamp) {
-            this.check_data();
+            this.add_heatmap_data_to_source();
         }
-    }
-
-    check_data() {
-        if (!this.state.loaded) {
-            return false;
-        }
-
-        this.add_tiles();
-        /*
-        if (this.props.data && this.props.data["features"]) {
-            for (let id of this.state.current_layers) {
-                this.state.map_object.removeSource(id);
-                this.state.map_object.removeLayer(id);
-                this.state.map_object.removeLayer(`${id}_outline`);
-            }
-
-            let current_layers = [];
-            for (let item of this.props.data["features"]) {
-                let id_string = `custom_geolayer_${item["properties"]["id"]}`;
-                this.add_polygon(id_string, item);
-                current_layers.push(id_string);
-            }
-
-            this.setState({ current_layers: current_layers });
-        }
-        */
     }
 
     add_tiles() {
@@ -162,8 +135,19 @@ export default class App extends React.PureComponent {
             return false;
         }
 
-        let min_value = 0;
-        let max_value = 255;
+        let min_value = 1000000;
+        let max_value = -1000000;
+        for (let key in this.props.map_color_data) {
+            let item = this.props.map_color_data[key];
+            if (item > max_value) {
+                max_value = item;
+            }
+            if (item < min_value) {
+                min_value = item;
+            }
+        }
+        min_value = 0;
+        max_value = 100;
 
         map.addSource("statesData", {
             type: "vector",
@@ -175,21 +159,51 @@ export default class App extends React.PureComponent {
             id: "zip-codes-borders",
             type: "line",
             source: "statesData",
-            "source-layer": "postal", // Replace with the correct source layer name
+            "source-layer": this.props.source_layer, // Replace with the correct source layer name
+            filter: ["==", "level", 2],
             layout: {},
             paint: {
-                "line-color": "#1F51FF", // blue color
                 "line-width": 2, // Set the width of the border
-
                 "line-color": [
-                    "interpolate",
-                    ["linear"],
-                    ["feature-state", "value"], // Replace with your chosen metric
-                    min_value,
-                    "#FF0000", // Define the range and corresponding colors
-                    max_value,
-                    "#00FF00",
+                    "case",
+                    ["!=", ["to-number", ["feature-state", "value"]], 0],
+                    [
+                        "interpolate",
+                        ["linear"],
+                        ["feature-state", "value"],
+                        min_value,
+                        "rgba(255,0,0,1)",
+                        max_value,
+                        "rgba(0,255,0,1)",
+                    ],
+                    "rgba(0, 0, 0, 0)",
                 ],
+            },
+        });
+
+        map.addLayer({
+            id: "zip-codes-fill",
+            type: "fill",
+            source: "statesData",
+            "source-layer": this.props.source_layer, // Replace with the correct source layer name
+            filter: ["==", "level", 2],
+            layout: {},
+            paint: {
+                "fill-color": [
+                    "case",
+                    ["!=", ["to-number", ["feature-state", "value"]], 0],
+                    [
+                        "interpolate",
+                        ["linear"],
+                        ["feature-state", "value"],
+                        min_value,
+                        "rgba(255,0,0,1)",
+                        max_value,
+                        "rgba(0,255,0,1)",
+                    ],
+                    "rgba(0, 0, 0, 0)",
+                ],
+                "fill-opacity": 0.5,
             },
         });
 
@@ -216,30 +230,50 @@ export default class App extends React.PureComponent {
         let map = this.state.map_object;
 
         var tiles = map.querySourceFeatures("statesData", {
-            sourceLayer: "postal",
+            sourceLayer: this.props.source_layer,
+            filter: ["==", "level", 2],
         });
 
-        tiles.forEach(function (row) {
-            //let bounds = get_feature_bounds(row["geometry"]);
-            //let map_bounds = map.getBounds();
-            //let visible_feature = is_inside_bounds(map_bounds, bounds);
+        console.log("Color Keys", Object.keys(this.props.map_color_data));
 
-            if (row.id) {
-                let value = Math.random() * 255;
-                console.log("Tile Color", value);
+        tiles.forEach(
+            function (row) {
+                //let bounds = get_feature_bounds(row["geometry"]);
+                //let map_bounds = map.getBounds();
+                //let visible_feature = is_inside_bounds(map_bounds, bounds);
+                if (!row.id) {
+                    return false;
+                }
 
-                map.setFeatureState(
-                    {
-                        source: "statesData",
-                        sourceLayer: "postal",
-                        id: row.id,
-                    },
-                    {
-                        value: value,
-                    }
-                );
-            }
-        });
+                if (row.id in this.props.map_color_data) {
+                    //let value = Math.random() * 255;
+                    let value = this.props.map_color_data[row.id];
+                    console.log("Tile Color", value, row.id, row);
+
+                    map.setFeatureState(
+                        {
+                            source: "statesData",
+                            sourceLayer: this.props.source_layer,
+                            id: row.id,
+                        },
+                        {
+                            value: parseFloat(value),
+                        }
+                    );
+                } else {
+                    map.setFeatureState(
+                        {
+                            source: "statesData",
+                            sourceLayer: this.props.source_layer,
+                            id: row.id,
+                        },
+                        {
+                            value: 0,
+                        }
+                    );
+                }
+            }.bind(this)
+        );
     }
 
     add_polygon(id, data) {

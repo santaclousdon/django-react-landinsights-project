@@ -48,3 +48,31 @@ class SavedFilters(BaseModel):
             'data': self.data,
         }
     
+class Region(BaseModel):
+    type = models.CharField(max_length=1000, default='')
+    gid = models.CharField(max_length=1000, default='')
+
+    name = models.CharField(max_length=1000, default='')
+    state = models.CharField(max_length=1000, default='')
+    
+    def to_json(self):
+        return {
+            'id': self.id,
+            'gid': self.gid,
+            'name': self.name,
+            'state': self.state,
+        }
+    
+
+class RegionStatistics(BaseModel):
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='statistics')
+
+    type = models.CharField(max_length=1000, default='')
+
+    data = models.JSONField(default={})
+
+    def to_json(self):
+        return {
+            'type': self.type,
+            'data': self.data,
+        }

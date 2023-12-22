@@ -24,38 +24,25 @@ def Index(request, param="", param2="", param3="", param4="", param5="", param6=
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def GetMapRegions(request):
+def GetRegionData(request):
     filter_data = request.data
     pprint.pprint(filter_data)
 
-    data_files = {
-        'State': 'geojson_data/states.json', 
-        'County': 'geojson_data/counties.json',
-        'ZIP': 'geojson_data/zips.json',
-    }
+    region_data = []
 
-    file = open(os.path.join(settings.BASE_DIR, data_files[filter_data['geo_scale']]))
+    regions = Region.objects.filter(
+        active=True,
+    ).prefetch_related('statistics')
 
-    region_data = json.load(file)
+    for region in regions:
+        region_json = region.to_json()
 
-    file.close()
+        for stat in region.statistics.all():
+            region_json[stat.type] = stat.data
 
-    response_features = []
-    for item in region_data['features'][:100]:
-        if filter_data['geo_scale'] == 'State':
-            item['properties']['id'] = item['properties']['STATE']
-        elif filter_data['geo_scale'] == 'County':
-            item['properties']['id'] = '%s_%s' % (item['properties']['STATE'], item['properties']['COUNTY'])
-        elif filter_data['geo_scale'] == 'ZIP':
-            item['properties']['id'] = '%s_%s' % (item['properties']['STATEFP10'], item['properties']['ZCTA5CE10'])
-        
-        response_features.append(item)
-        #print(item['properties']['NAME'])
-        #print(' ', len(item['geometry']['coordinates']))
-        
-    region_data['features'] = response_features
+        region_data.append(region_json)
 
-    return JsonResponse(region_data)
+    return JsonResponse(region_data, safe=False)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
