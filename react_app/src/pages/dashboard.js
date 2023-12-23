@@ -346,7 +346,7 @@ export default class Dashboard extends Component {
 
 
                         <div className="row justify-content-center">
-                            <h6 class="text-center">*Filtered table regions will not be visualized on heatmap</h6>
+                            <h6 class="text-center">*Filtered regions will not be visualized on heatmap</h6>
                         </div>
 
                     </div>
