@@ -6,7 +6,7 @@ import { Button, Select } from "library";
 
 import { ajax_wrapper, get_url } from "functions";
 
-const TIME_SCALES = ["1 Months", "3 Months", "6 Months", "1 Year"];
+const ACRE_RANGES = ["2 to 100 Acres", "0.2 to 5 Acres", "5 to 10 Acres", "10 to 20 Acres", "..."];
 const GEO_SCALES = ["State", "County", "ZIP"];
 
 const UNWANTED_FIELDS = ["id", "gid", "name", "state"];
@@ -85,7 +85,7 @@ export default class Dashboard extends Component {
 
             map_filter_data: {
                 geo_scale: GEO_SCALES[0],
-                time_scale: TIME_SCALES[0],
+                time_scale: ACRE_RANGES[0],
                 visual_field: "1 acre-2 acre : Active",
             },
             region_data: [],
@@ -164,7 +164,7 @@ export default class Dashboard extends Component {
                         company_id: window.secret_react_vars["user"]["company"],
                         data: this.state.filter_data,
                     },
-                    function () {}
+                    function () { }
                 );
             }.bind(this)
         );
@@ -250,19 +250,69 @@ export default class Dashboard extends Component {
 
         let save_filters_button = (
             <Button onClick={this.save_filters} type="gradient-secondary">
-                {"Save Filters"}
+                {"Save Filter"}
             </Button>
         );
         if (this.state.filters_saved) {
             save_filters_button = (
                 <Button type="gradient-secondary" disabled={true}>
-                    {"Filters Saved!"}
+                    {"Filter Saved!"}
                 </Button>
             );
         }
 
         return (
             <div>
+
+                <div className="card mb-5">
+
+                    <div className="card-body">
+
+                        <div className="row justify-content-center mb-4">
+                            <h4 class="text-center">Select The Acreage Range And Data Level You'd Like To See</h4>
+                        </div>
+
+                        <div className="row justify-content-center">
+
+                            {/* Acreage Range Section */}
+                            <div className="col-12 col-md-6">
+                                <div className="d-flex flex-column align-items-center" style={group_title_style}>
+                                    <h6 style={{ marginBottom: 0 }}>Acreage Range</h6>
+                                    <div style={{ marginTop: '10px', width: '200px' }}>
+                                        <Select
+                                            options={
+                                                ACRE_RANGES.map((item) => {
+                                                    return { text: item, value: item };
+                                                })
+                                            }
+                                            name="acre_range"
+                                            value={"2 to 100 Acres"}
+                                            set_form_state={(state) =>
+                                                this.setState({})
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Level Section */}
+                            <div className="col-12 col-md-6">
+                                <div className="d-flex flex-column align-items-center" style={group_title_style}>
+                                    <h6 style={{ marginBottom: 0 }}>Level</h6>
+                                    <div style={{ marginTop: '10px' }}>
+                                        <ToggleGroup
+                                            group_name="geo_scale"
+                                            on_change={this.change_scope}
+                                            options={GEO_SCALES}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
                 <div className="card mb-5">
                     <div className="card-header">
                         <MapboxMap
@@ -273,49 +323,35 @@ export default class Dashboard extends Component {
                         />
                     </div>
                     <div className="card-body">
+
                         <div className="row">
-                            <div className="col-5">
-                                <div style={group_title_style}>
-                                    <h6>Timeframe</h6>
-                                </div>
-                                <div style={{ display: "inline-block" }}>
-                                    <ToggleGroup
-                                        group_name="time_scale"
-                                        on_change={this.change_scope}
-                                        options={TIME_SCALES}
-                                    />
-                                </div>
-                            </div>
-                            <div className="col-4">
-                                <div style={group_title_style}>
-                                    <h6>Level</h6>
-                                </div>
-                                <div style={{ display: "inline-block" }}>
-                                    <ToggleGroup
-                                        group_name="geo_scale"
-                                        on_change={this.change_scope}
-                                        options={GEO_SCALES}
-                                    />
-                                </div>
-                            </div>
-                            <div className="col-3">
-                                <div style={group_title_style}>
-                                    <h6>Visualization</h6>
-                                </div>
-                                <div style={{ display: "inline-block" }}>
-                                    <Select
-                                        options={field_options}
-                                        name="visual_field"
-                                        value={this.state.map_filter_data["visual_field"]}
-                                        set_form_state={(state) =>
-                                            this.setState({ map_filter_data: state, data_timestamp: Date.now() })
-                                        }
-                                    />
+                            <div className="col-12 d-flex justify-content-center">
+                                <div className="d-flex align-items-center"> {/* Flex container for inline alignment */}
+                                    <div style={group_title_style}>
+                                        <h6>Heatmap Based On:</h6>
+                                    </div>
+                                    <div style={{ marginLeft: '5px' }}> {/* Optional margin for spacing */}
+                                        <Select
+                                            options={field_options}
+                                            name="visual_field"
+                                            value={this.state.map_filter_data["visual_field"]}
+                                            set_form_state={(state) =>
+                                                this.setState({ map_filter_data: state, data_timestamp: Date.now() })
+                                            }
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+
+                        <div className="row justify-content-center">
+                            <h6 class="text-center">*Filtered table regions will not be visualized on heatmap</h6>
+                        </div>
+
                     </div>
                 </div>
+
                 <div className="card">
                     <div className="card-header">
                         <div style={{ float: "right" }}>{save_filters_button}</div>
