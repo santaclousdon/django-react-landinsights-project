@@ -268,7 +268,7 @@ export default class Dashboard extends Component {
 
                     <div className="card-body">
 
-                        <div className="row justify-content-center mb-4">
+                        <div className="row justify-content-center mb-5">
                             <h4 class="text-center">Select The Acreage Range And Data Level You'd Like To See</h4>
                         </div>
 

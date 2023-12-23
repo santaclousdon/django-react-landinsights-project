@@ -62,15 +62,17 @@ export default class Sidebar extends Component {
                 className="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3"
                 id="sidenav-main"
             >
-                <div className="sidenav-header">
-                    <a
-                        className="navbar-brand m-0"
-                        href=" https://demos.creative-tim.com/soft-ui-dashboard-pro/pages/dashboards/default.html "
-                        target="_blank"
-                    >
-                        <span className="ms-1 font-weight-bold">Land Insights</span>
+
+                <div className="sidenav-header text-center">
+                    <a className="navbar-brand m-0" href="/" target="_blank">
+                        <img
+                            src="https://landinsights.co/wp-content/uploads/2023/10/land_insights_logo_250.png.webp"
+                            style={{ maxWidth: '250px', height: 'auto', transform: 'scale(1.5)' }}
+                            alt="Your Logo"
+                        />
                     </a>
                 </div>
+
                 <hr className="horizontal dark mt-0" />
 
                 <div className="collapse navbar-collapse w-auto h-auto" style={{ paddingBottom: "50px" }}>
