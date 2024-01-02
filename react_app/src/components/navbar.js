@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import { prettify_string } from "functions";
+import { Button } from "library";
 
 export default class Navbar extends Component {
     render() {
@@ -49,7 +50,11 @@ export default class Navbar extends Component {
                             </div>
                         </a>
                     </div> */}
-                    {/* <div className="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar"></div> */}
+                    <div style={{ float: "right" }}>
+                        <Button style={{ margin: "0px" }} href={`/logout`} type="outline-secondary">
+                            Logout
+                        </Button>
+                    </div>
                 </div>
             </nav>
         );

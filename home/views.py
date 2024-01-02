@@ -82,7 +82,7 @@ def handle_get_or_set_request(request, model, id=None, many_get_relation=None):
             object = model.objects.get(id=id)
             json_response = object.to_json()
         else:
-            objects = many_get_relation
+            objects = many_get_relation.filter(active=True)
 
             json_response = []
             for object in objects.all():
@@ -109,5 +109,7 @@ def handle_get_or_set_request(request, model, id=None, many_get_relation=None):
         object = model.objects.get(id=id)
         object.active = False
         object.save()
+
+        json_response = {}
 
     return json_response

@@ -6,7 +6,16 @@ import { Button, Select } from "library";
 
 import { ajax_wrapper, get_url } from "functions";
 
-const ACRE_RANGES = ["2 to 100 Acres", "0.2 to 5 Acres", "5 to 10 Acres", "10 to 20 Acres", "..."];
+const TIME_SCALES = ["1 Months", "3 Months", "6 Months", "1 Year"];
+
+const ACRE_RANGES = {
+    "2 to 100 Acres": "2 acre-100 acre",
+    "2 to 5 Acres": "2 acre-5 acre",
+    "5 to 10 Acres": "5 acre-10 acre",
+    "10 to 20 Acres": "10 acre-20 acre",
+    "...": "",
+};
+
 const GEO_SCALES = ["State", "County", "ZIP"];
 
 const UNWANTED_FIELDS = ["id", "gid", "name", "state"];
@@ -85,8 +94,9 @@ export default class Dashboard extends Component {
 
             map_filter_data: {
                 geo_scale: GEO_SCALES[0],
-                time_scale: ACRE_RANGES[0],
-                visual_field: "1 acre-2 acre : Active",
+                time_scale: TIME_SCALES[0],
+                acre_range: Object.keys(ACRE_RANGES)[0],
+                visual_field: "Active",
             },
             region_data: [],
             markets: [],
@@ -100,6 +110,7 @@ export default class Dashboard extends Component {
         this.refresh_markets = this.refresh_markets.bind(this);
         this.get_region_data = this.get_region_data.bind(this);
         this.change_scope = this.change_scope.bind(this);
+        this.update_visuals = this.update_visuals.bind(this);
 
         this.handle_filter_change = this.handle_filter_change.bind(this);
         this.save_filters = this.save_filters.bind(this);
@@ -146,6 +157,14 @@ export default class Dashboard extends Component {
         }
     }
 
+    update_visuals(state) {
+        let new_filter_data = Object.assign(this.state.map_filter_data, state);
+        this.setState({
+            map_filter_data: new_filter_data,
+            data_timestamp: Date.now(),
+        });
+    }
+
     handle_filter_change(data) {
         this.setState({
             filter_data: data,
@@ -164,7 +183,7 @@ export default class Dashboard extends Component {
                         company_id: window.secret_react_vars["user"]["company"],
                         data: this.state.filter_data,
                     },
-                    function () { }
+                    function () {}
                 );
             }.bind(this)
         );
@@ -184,25 +203,30 @@ export default class Dashboard extends Component {
             rows = this.state.markets;
         }
 
+        let acrage_key = ACRE_RANGES[this.state.map_filter_data["acre_range"]];
+        let field_key = this.state.map_filter_data["visual_field"];
+
         if (rows.length > 0) {
             let test_row = rows[0];
             for (let key in test_row) {
+                if (key != acrage_key) {
+                    continue;
+                }
                 if (UNWANTED_FIELDS.includes(key)) {
                     continue;
                 }
 
                 for (let point in test_row[key]) {
                     field_options.push({
-                        text: `${key} : ${point}`,
-                        value: `${key} : ${point}`,
+                        text: `${point}`,
+                        value: `${point}`,
                     });
                 }
             }
         }
 
-        let visual_field_parts = this.state.map_filter_data["visual_field"].split(" : ");
         for (let item of rows) {
-            let value = item[visual_field_parts[0]][visual_field_parts[1]];
+            let value = item[acrage_key][field_key];
             if (value > 0) {
                 map_color_data[item["gid"]] = value;
             }
@@ -231,6 +255,7 @@ export default class Dashboard extends Component {
                 },
             },
         ];
+
         if (this.props.saved_markets) {
             columns = [
                 { field: "company", filter: true },
@@ -263,33 +288,25 @@ export default class Dashboard extends Component {
 
         return (
             <div>
-
                 <div className="card mb-5">
-
                     <div className="card-body">
-
                         <div className="row justify-content-center mb-5">
                             <h4 class="text-center">Select The Acreage Range And Data Level You'd Like To See</h4>
                         </div>
 
                         <div className="row justify-content-center">
-
                             {/* Acreage Range Section */}
                             <div className="col-12 col-md-6">
                                 <div className="d-flex flex-column align-items-center" style={group_title_style}>
                                     <h6 style={{ marginBottom: 0 }}>Acreage Range</h6>
-                                    <div style={{ marginTop: '10px', width: '200px' }}>
+                                    <div style={{ marginTop: "10px", width: "200px" }}>
                                         <Select
-                                            options={
-                                                ACRE_RANGES.map((item) => {
-                                                    return { text: item, value: item };
-                                                })
-                                            }
+                                            options={Object.keys(ACRE_RANGES).map((item) => {
+                                                return { text: item, value: item };
+                                            })}
                                             name="acre_range"
                                             value={"2 to 100 Acres"}
-                                            set_form_state={(state) =>
-                                                this.setState({})
-                                            }
+                                            set_form_state={this.update_visuals}
                                         />
                                     </div>
                                 </div>
@@ -299,7 +316,7 @@ export default class Dashboard extends Component {
                             <div className="col-12 col-md-6">
                                 <div className="d-flex flex-column align-items-center" style={group_title_style}>
                                     <h6 style={{ marginBottom: 0 }}>Level</h6>
-                                    <div style={{ marginTop: '10px' }}>
+                                    <div style={{ marginTop: "10px" }}>
                                         <ToggleGroup
                                             group_name="geo_scale"
                                             on_change={this.change_scope}
@@ -309,7 +326,6 @@ export default class Dashboard extends Component {
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -323,32 +339,31 @@ export default class Dashboard extends Component {
                         />
                     </div>
                     <div className="card-body">
-
                         <div className="row">
                             <div className="col-12 d-flex justify-content-center">
-                                <div className="d-flex align-items-center"> {/* Flex container for inline alignment */}
+                                <div className="d-flex align-items-center">
+                                    {" "}
+                                    {/* Flex container for inline alignment */}
                                     <div style={group_title_style}>
                                         <h6>Heatmap Based On:</h6>
                                     </div>
-                                    <div style={{ marginLeft: '5px' }}> {/* Optional margin for spacing */}
+                                    <div style={{ marginLeft: "5px" }}>
+                                        {" "}
+                                        {/* Optional margin for spacing */}
                                         <Select
                                             options={field_options}
                                             name="visual_field"
                                             value={this.state.map_filter_data["visual_field"]}
-                                            set_form_state={(state) =>
-                                                this.setState({ map_filter_data: state, data_timestamp: Date.now() })
-                                            }
+                                            set_form_state={this.update_visuals}
                                         />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
                         <div className="row justify-content-center">
                             <h6 class="text-center">*Filtered regions will not be visualized on heatmap</h6>
                         </div>
-
                     </div>
                 </div>
 

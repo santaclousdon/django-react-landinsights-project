@@ -4,12 +4,23 @@ import { prettify_string } from "functions";
 
 import internal_routes from "../routes/internal";
 
+const ROUTE_ICONS = {
+    saved_filters: "filter",
+    campaigns: "envelope-open-text",
+    my_markets: "bullseye",
+};
+
 class NavItem extends Component {
     render() {
+        let icon_type = "search";
+        if (this.props.name in ROUTE_ICONS) {
+            icon_type = ROUTE_ICONS[this.props.name];
+        }
+
         let nav_image = (
             <div className="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center me-2">
                 <i
-                    className="fas fa-search"
+                    className={`fas fa-${icon_type}`}
                     style={{
                         opacity: 1,
                         fontSize: "14px",
@@ -24,7 +35,7 @@ class NavItem extends Component {
         let active = "";
         if (
             this.props.current == this.props.name ||
-            (this.props.current == "" && this.props.name == "market_research")
+            (this.props.current == "home" && this.props.name == "market_research")
         ) {
             active = "active";
         }
@@ -62,12 +73,11 @@ export default class Sidebar extends Component {
                 className="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3"
                 id="sidenav-main"
             >
-
                 <div className="sidenav-header text-center">
                     <a className="navbar-brand m-0" href="/" target="_blank">
                         <img
-                            src="https://landinsights.co/wp-content/uploads/2023/10/land_insights_logo_250.png.webp"
-                            style={{ maxWidth: '250px', height: 'auto', transform: 'scale(1.5)' }}
+                            src="/static/images/land_insights_logo.png"
+                            style={{ maxWidth: "250px", height: "auto", transform: "scale(1.5)" }}
                             alt="Your Logo"
                         />
                     </a>
