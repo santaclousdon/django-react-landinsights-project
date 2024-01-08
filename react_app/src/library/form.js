@@ -87,6 +87,9 @@ class FormWithChildren extends Component {
         const data = { ...this.state };
         delete data.children;
         delete data.form_state;
+        delete data.defaults;
+        delete data.form_child_update_key;
+        delete data.required;
 
         const new_state = {
             required: [],
@@ -209,8 +212,8 @@ class FormWithChildren extends Component {
 
         let submit_button = null;
         let float;
-        if (this.props.submitUrl || this.props.submit) {
-            let submit_button_type = this.props.submit_button_type || "primary";
+        if (this.props.submit_url || this.props.submit) {
+            let submit_button_type = this.props.submit_button_type || "gradient-success";
 
             float = { float: "left" };
             let submit_disabled = {};

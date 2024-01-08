@@ -45,7 +45,7 @@ class TrackButton extends Component {
     check_markets() {
         let my_market_id = null;
         for (let item of this.props.markets) {
-            if (item["gid"] == this.props.value) {
+            if (item["region"]["id"] == this.props.data['id']) {
                 my_market_id = item["id"];
             }
         }
@@ -62,8 +62,7 @@ class TrackButton extends Component {
                 "/api/markets/",
                 {
                     company_id: window.secret_react_vars["user"]["company"],
-                    type: this.props.type,
-                    gid: this.props.value,
+                    region_id: this.props.data['id'],
                 },
                 this.props.refresh_markets
             );
@@ -183,7 +182,7 @@ export default class Dashboard extends Component {
                         company_id: window.secret_react_vars["user"]["company"],
                         data: this.state.filter_data,
                     },
-                    function () {}
+                    function () { }
                 );
             }.bind(this)
         );
@@ -195,16 +194,48 @@ export default class Dashboard extends Component {
             marginRight: "30px",
         };
 
+        let region_data_lookup = {};
+        for (let item of this.state.region_data) {
+            region_data_lookup[item['id']] = item;
+        }
+
+
+        let acrage_key = ACRE_RANGES[this.state.map_filter_data["acre_range"]];
+        let field_key = this.state.map_filter_data["visual_field"];
+
+
         let rows = this.state.region_data;
+        let table_rows = [];
 
         let field_options = [];
         let map_color_data = {};
         if (this.props.saved_markets) {
-            rows = this.state.markets;
+            rows = [];
+            for (let item of this.state.markets) {
+                if (item['region']['id'] in region_data_lookup) {
+                    rows.push(region_data_lookup[item['region']['id']]);
+                }
+            }
+            for (let item of this.state.markets) {
+                table_rows.push({
+                    'company': item['company'],
+                    'name': item['region']['name'],
+                    'type': item['region']['type'],
+                    'gid': item['region']['gid'],
+                })
+            }
         }
-
-        let acrage_key = ACRE_RANGES[this.state.map_filter_data["acre_range"]];
-        let field_key = this.state.map_filter_data["visual_field"];
+        else {
+            for (let item of this.state.region_data) {
+                table_rows.push({
+                    'id': item['id'],
+                    'gid': item['gid'],
+                    'name': item['name'],
+                    'state': item['state'],
+                    ...item[acrage_key],
+                })
+            }
+        }
 
         if (rows.length > 0) {
             let test_row = rows[0];
@@ -234,17 +265,16 @@ export default class Dashboard extends Component {
 
         let columns = [
             { field: "state", filter: true },
-            { field: "county", filter: true },
-            { field: "pending_ratio", filter: true },
-            { field: "sales_ratio_30", filter: true },
-            { field: "sales_ratio_90", filter: true },
-            { field: "sales_ratio_180", filter: true },
-            { field: "sales_ratio_360", filter: true },
-            { field: "sold_30", filter: true },
-            { field: "sold_60", filter: true },
-            { field: "sold_90", filter: true },
-            { field: "sold_180", filter: true },
-            { field: "sold_360", filter: true },
+            { field: "name", filter: true },
+            { field: "Pending STR", filter: true },
+            { field: "1mo STR", filter: true },
+            { field: "3mo STR", filter: true },
+            { field: "6mo STR", filter: true },
+            { field: "1yr STR", filter: true },
+            { field: "Sold: 1mo", filter: true },
+            { field: "Sold: 3mo", filter: true },
+            { field: "Sold: 6mo", filter: true },
+            { field: "Sold: 1yr", filter: true },
             {
                 field: "id",
                 cellRenderer: TrackButton,
@@ -263,7 +293,7 @@ export default class Dashboard extends Component {
                 { field: "type", filter: true },
                 { field: "gid", filter: true },
                 {
-                    field: "gid",
+                    field: "id",
                     cellRenderer: TrackButton,
                     cellRendererParams: {
                         markets: this.state.markets,
@@ -375,7 +405,7 @@ export default class Dashboard extends Component {
                     </div>
                     <div className="card-body">
                         <AGGrid
-                            rows={rows}
+                            rows={table_rows}
                             columns={columns}
                             handle_filter_change={this.handle_filter_change}
                             saved_filters={this.state.filter_data}

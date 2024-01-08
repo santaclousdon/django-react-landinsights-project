@@ -8,3 +8,4 @@ export { default as AGGrid } from "./ag_grid.js";
 export { default as Sidebar } from "./sidebar.js";
 export { default as Navbar } from "./navbar.js";
 export { default as ToggleGroup } from "./toggle_group.js";
+export { default as Modal } from "./modal.js";

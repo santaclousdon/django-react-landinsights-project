@@ -54,7 +54,20 @@ def ManageMarkets(request, id=None):
         request, 
         SavedMarket, 
         id=id,
-        many_get_relation=request.user.companies.first().markets
+        many_get_relation=request.user.companies.first().markets.prefetch_related('region', 'region__statistics')
+    )
+
+    return JsonResponse(json_response, safe=False)
+
+@api_view(['GET', 'POST', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def ManageMarketNotes(request, id=None):
+    json_response = {}
+    
+    json_response = handle_get_or_set_request(
+        request, 
+        SavedMarketNote, 
+        id=id,
     )
 
     return JsonResponse(json_response, safe=False)
@@ -96,8 +109,9 @@ def handle_get_or_set_request(request, model, id=None, many_get_relation=None):
         pprint.pprint(json_data)
 
         if id:
-            object = model.objects.get(id=id)
+            object = model.objects.filter(id=id)
             object.update(**json_data)
+            object.first()
 
         else:
             object = model.objects.create(**json_data)
