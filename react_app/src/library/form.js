@@ -126,6 +126,7 @@ class FormWithChildren extends Component {
     form_submit_callback(value) {
         // Handle standard form submission
         if (this.props.submit_success) {
+            this.props.submit_success(value);
         }
 
         if (this.props.reset_state_on_submit) {

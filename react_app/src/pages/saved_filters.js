@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { MapboxMap, AGGrid, ToggleGroup } from "components";
-import { Button } from "library";
+import { Button, JSONRender } from "library";
 import { ajax_wrapper, prettify_string } from "functions";
 
 class OpenButton extends Component {
@@ -33,19 +33,6 @@ class DeleteButton extends Component {
     }
 }
 
-class JSONRender extends Component {
-    render() {
-        let fields = [];
-        for (let key in this.props.value) {
-            let item = this.props.value[key];
-            fields.push(
-                <div>{`${prettify_string(key)}: ${item["filterType"]} ${item["type"]} ${item["filter"]}`}</div>
-            );
-        }
-        return <div>{fields}</div>;
-    }
-}
-
 export default class SavedFilters extends Component {
     constructor(props) {
         super(props);
@@ -73,7 +60,7 @@ export default class SavedFilters extends Component {
 
         let columns = [
             { field: "name", filter: true },
-            { field: "data", cellRenderer: JSONRender },
+            { field: "data", cellRenderer: JSONRender, autoHeight: true },
             { field: "Open", cellRenderer: OpenButton },
             { field: "Delete?", cellRenderer: DeleteButton },
         ];

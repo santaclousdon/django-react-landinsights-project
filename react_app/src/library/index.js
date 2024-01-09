@@ -8,3 +8,7 @@ export { default as TextArea } from "./textarea.js";
 export { default as Select } from "./select.js";
 
 export { default as Card } from "./card.js";
+
+export { default as Modal } from "../library/modal.js";
+
+export { default as JSONRender } from "../library/json_render.js";

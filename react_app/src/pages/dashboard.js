@@ -1,22 +1,11 @@
 import React, { Component } from "react";
-import { useOutletContext } from "react-router-dom";
 
 import { MapboxMap, AGGrid, ToggleGroup } from "components";
-import { Button, Select } from "library";
+import { Button, Select, Form, TextInput, Modal, JSONRender } from "library";
 
 import { ajax_wrapper, get_url } from "functions";
 
-const TIME_SCALES = ["1 Months", "3 Months", "6 Months", "1 Year"];
-
-const ACRE_RANGES = {
-    "2 to 100 Acres": "2 acre-100 acre",
-    "2 to 5 Acres": "2 acre-5 acre",
-    "5 to 10 Acres": "5 acre-10 acre",
-    "10 to 20 Acres": "10 acre-20 acre",
-    "...": "",
-};
-
-const GEO_SCALES = ["State", "County", "ZIP"];
+import { TIME_SCALES, ACRE_RANGES, GEO_SCALES } from "../constants";
 
 const UNWANTED_FIELDS = ["id", "gid", "name", "state"];
 
@@ -45,39 +34,51 @@ class TrackButton extends Component {
     check_markets() {
         let my_market_id = null;
         for (let item of this.props.markets) {
-            if (item["region"]["id"] == this.props.data['id']) {
+            if (item["region"]["id"] == this.props.data["id"]) {
                 my_market_id = item["id"];
             }
         }
 
-        this.setState({ id: my_market_id });
+        this.setState({
+            id: my_market_id,
+            disabled: false,
+        });
     }
 
     track_market() {
-        if (this.state.id) {
-            ajax_wrapper("DELETE", `/api/markets/${this.state.id}/`, {}, this.props.refresh_markets);
-        } else {
-            ajax_wrapper(
-                "POST",
-                "/api/markets/",
-                {
-                    company_id: window.secret_react_vars["user"]["company"],
-                    region_id: this.props.data['id'],
-                },
-                this.props.refresh_markets
-            );
-        }
+        this.setState(
+            {
+                disabled: true,
+            },
+            function () {
+                if (this.state.id) {
+                    ajax_wrapper("DELETE", `/api/markets/${this.state.id}/`, {}, this.props.refresh_markets);
+                } else {
+                    ajax_wrapper(
+                        "POST",
+                        "/api/markets/",
+                        {
+                            company_id: window.secret_react_vars["user"]["company"],
+                            region_id: this.props.data["id"],
+                        },
+                        this.props.refresh_markets
+                    );
+                }
+            }.bind(this)
+        );
     }
 
     render() {
+        let disabled = this.state.disabled;
+
         let button = (
-            <Button onClick={this.track_market} type="gradient-secondary">
+            <Button onClick={this.track_market} type="gradient-secondary" disabled={disabled}>
                 <i class="fa fa-plus"></i> Add
             </Button>
         );
         if (this.state.id) {
             button = (
-                <Button onClick={this.track_market} type="gradient-danger">
+                <Button onClick={this.track_market} type="gradient-danger" disabled={disabled}>
                     <i class="fa fa-minus"></i> Remove
                 </Button>
             );
@@ -96,6 +97,7 @@ export default class Dashboard extends Component {
                 time_scale: TIME_SCALES[0],
                 acre_range: Object.keys(ACRE_RANGES)[0],
                 visual_field: "Active",
+                table_rows: [],
             },
             region_data: [],
             markets: [],
@@ -112,7 +114,6 @@ export default class Dashboard extends Component {
         this.update_visuals = this.update_visuals.bind(this);
 
         this.handle_filter_change = this.handle_filter_change.bind(this);
-        this.save_filters = this.save_filters.bind(this);
     }
 
     componentDidMount() {
@@ -128,7 +129,29 @@ export default class Dashboard extends Component {
     }
 
     refresh_markets() {
-        ajax_wrapper("GET", "/api/markets/", {}, (value) => this.setState({ markets: value }));
+        ajax_wrapper(
+            "GET",
+            "/api/markets/",
+            {},
+            function (value) {
+                let table_rows = this.state.table_rows;
+                if (this.props.saved_markets) {
+                    table_rows = [];
+                    for (let item of this.state.markets) {
+                        table_rows.push({
+                            company: item["company"],
+                            name: item["region"]["name"],
+                            type: item["region"]["type"],
+                            gid: item["region"]["gid"],
+                        });
+                    }
+                }
+                this.setState({
+                    markets: value,
+                    table_rows: table_rows,
+                });
+            }.bind(this)
+        );
     }
 
     get_region_data() {
@@ -137,8 +160,33 @@ export default class Dashboard extends Component {
             return false;
         }
 
-        ajax_wrapper("POST", "/get_region_data/", data, (value) =>
-            this.setState({ region_data: value, data_timestamp: Date.now() })
+        ajax_wrapper(
+            "POST",
+            "/get_region_data/",
+            data,
+            function (value) {
+                let acrage_key = ACRE_RANGES[this.state.map_filter_data["acre_range"]];
+                let table_rows = this.state.table_rows;
+
+                if (!this.props.saved_markets) {
+                    table_rows = [];
+                    for (let item of value) {
+                        table_rows.push({
+                            id: item["id"],
+                            gid: item["gid"],
+                            name: item["name"],
+                            state: item["state"],
+                            ...item[acrage_key],
+                        });
+                    }
+                }
+
+                this.setState({
+                    region_data: value,
+                    data_timestamp: Date.now(),
+                    table_rows: table_rows,
+                });
+            }.bind(this)
         );
     }
 
@@ -171,23 +219,6 @@ export default class Dashboard extends Component {
         });
     }
 
-    save_filters() {
-        this.setState(
-            { filters_saved: true },
-            function () {
-                ajax_wrapper(
-                    "POST",
-                    "/api/filters/",
-                    {
-                        company_id: window.secret_react_vars["user"]["company"],
-                        data: this.state.filter_data,
-                    },
-                    function () { }
-                );
-            }.bind(this)
-        );
-    }
-
     render() {
         let group_title_style = {
             //display: "inline-block",
@@ -196,49 +227,27 @@ export default class Dashboard extends Component {
 
         let region_data_lookup = {};
         for (let item of this.state.region_data) {
-            region_data_lookup[item['id']] = item;
+            region_data_lookup[item["id"]] = item;
         }
-
 
         let acrage_key = ACRE_RANGES[this.state.map_filter_data["acre_range"]];
         let field_key = this.state.map_filter_data["visual_field"];
 
-
-        let rows = this.state.region_data;
-        let table_rows = [];
+        let map_coloring_input = this.state.region_data;
+        if (this.props.saved_markets) {
+            map_coloring_input = [];
+            for (let item of this.state.markets) {
+                if (item["region"]["id"] in region_data_lookup) {
+                    map_coloring_input.push(region_data_lookup[item["region"]["id"]]);
+                }
+            }
+        }
 
         let field_options = [];
         let map_color_data = {};
-        if (this.props.saved_markets) {
-            rows = [];
-            for (let item of this.state.markets) {
-                if (item['region']['id'] in region_data_lookup) {
-                    rows.push(region_data_lookup[item['region']['id']]);
-                }
-            }
-            for (let item of this.state.markets) {
-                table_rows.push({
-                    'company': item['company'],
-                    'name': item['region']['name'],
-                    'type': item['region']['type'],
-                    'gid': item['region']['gid'],
-                })
-            }
-        }
-        else {
-            for (let item of this.state.region_data) {
-                table_rows.push({
-                    'id': item['id'],
-                    'gid': item['gid'],
-                    'name': item['name'],
-                    'state': item['state'],
-                    ...item[acrage_key],
-                })
-            }
-        }
 
-        if (rows.length > 0) {
-            let test_row = rows[0];
+        if (map_coloring_input.length > 0) {
+            let test_row = map_coloring_input[0];
             for (let key in test_row) {
                 if (key != acrage_key) {
                     continue;
@@ -256,7 +265,7 @@ export default class Dashboard extends Component {
             }
         }
 
-        for (let item of rows) {
+        for (let item of map_coloring_input) {
             let value = item[acrage_key][field_key];
             if (value > 0) {
                 map_color_data[item["gid"]] = value;
@@ -304,7 +313,17 @@ export default class Dashboard extends Component {
         }
 
         let save_filters_button = (
-            <Button onClick={this.save_filters} type="gradient-secondary">
+            <Button
+                onClick={(e) =>
+                    this.setState({
+                        saving_filter: {
+                            company_id: window.secret_react_vars["user"]["company"],
+                            data: this.state.filter_data,
+                        },
+                    })
+                }
+                type="gradient-secondary"
+            >
                 {"Save Filter"}
             </Button>
         );
@@ -313,6 +332,27 @@ export default class Dashboard extends Component {
                 <Button type="gradient-secondary" disabled={true}>
                     {"Filter Saved!"}
                 </Button>
+            );
+        }
+
+        let filter_modal = null;
+        if (this.state.saving_filter) {
+            filter_modal = (
+                <Modal show={true} on_hide={() => this.setState({ saving_filter: null })}>
+                    <div>
+                        <div>Filter Details:</div>
+                        <div>
+                            <JSONRender value={this.state.saving_filter.data} />
+                        </div>
+                    </div>
+                    <Form
+                        submit_url="/api/filters/"
+                        defaults={this.state.saving_filter}
+                        submit_success={(value) => this.setState({ saving_filter: null, filters_saved: true })}
+                    >
+                        <TextInput name="name" label="Filter Name" />
+                    </Form>
+                </Modal>
             );
         }
 
@@ -335,7 +375,7 @@ export default class Dashboard extends Component {
                                                 return { text: item, value: item };
                                             })}
                                             name="acre_range"
-                                            value={"2 to 100 Acres"}
+                                            value={this.state.map_filter_data["acre_range"]}
                                             set_form_state={this.update_visuals}
                                         />
                                     </div>
@@ -405,13 +445,15 @@ export default class Dashboard extends Component {
                     </div>
                     <div className="card-body">
                         <AGGrid
-                            rows={table_rows}
+                            rows={this.state.table_rows}
                             columns={columns}
                             handle_filter_change={this.handle_filter_change}
                             saved_filters={this.state.filter_data}
                         />
                     </div>
                 </div>
+
+                <div>{filter_modal}</div>
             </div>
         );
     }

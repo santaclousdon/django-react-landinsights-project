@@ -111,13 +111,13 @@ def handle_get_or_set_request(request, model, id=None, many_get_relation=None):
         if id:
             object = model.objects.filter(id=id)
             object.update(**json_data)
-            object.first()
+            object = object.first()
 
         else:
             object = model.objects.create(**json_data)
 
-
         json_response = object.to_json()
+
 
     elif request.method == 'DELETE':
         object = model.objects.get(id=id)

@@ -33,23 +33,32 @@ function ajax_wrapper(type, url, data, returnFunc) {
                 if (typeof value === "object" && "redirect" in value) {
                     window.location = `${value.redirect}?redirect=${window.secret_react_vars.BASE_URL}`;
                 }
-                returnFunc(value);
+
+                if (returnFunc) {
+                    returnFunc(value);
+                }
             },
             400(value) {
                 value = { error: "Bad Request" };
-                returnFunc(value);
+                if (returnFunc) {
+                    returnFunc(value);
+                }
             },
             401(xhr) {
                 if (url.endsWith("/users/token/")) {
                     var value = { error: "Invalid Credentials" };
-                    returnFunc(value);
+                    if (returnFunc) {
+                        returnFunc(value);
+                    }
                 } else {
                     refresh_token(type, url, data, xhr.responseJSON, returnFunc);
                 }
             },
             408(value) {
                 value = { error: "Request Timed Out" };
-                returnFunc(value);
+                if (returnFunc) {
+                    returnFunc(value);
+                }
             },
         },
     });
