@@ -5,6 +5,7 @@ import { ajax_wrapper, save_token } from "functions";
 
 // GOOGLE OAUTH USES THIS DOCUMENTATION!!!!
 // https://developers.google.com/identity/oauth2/web/guides/use-token-model
+const GOOGLE_CLIENT_ID = '297720701797-4r7ijvdjgu5e7tf23jto6g4dqm8k23cs.apps.googleusercontent.com';
 
 export default class Login extends Component {
     constructor(props) {
@@ -21,7 +22,7 @@ export default class Login extends Component {
 
     componentDidMount() {
         let client = window.google.accounts.oauth2.initTokenClient({
-            client_id: '877580727759-84kvf4jrs48mer5ij51hkban3424ghv7.apps.googleusercontent.com',
+            client_id: GOOGLE_CLIENT_ID,
             scope: 'email profile openid',
             callback: (response) => this.google_login(response)
         });

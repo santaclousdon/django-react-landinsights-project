@@ -151,8 +151,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": ("rest_framework.parsers.JSONParser",),
 }
 
-GOOGLE_CLIENT_ID = '877580727759-84kvf4jrs48mer5ij51hkban3424ghv7.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = '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'
+GOOGLE_CLIENT_ID = '297720701797-4r7ijvdjgu5e7tf23jto6g4dqm8k23cs.apps.googleusercontent.com'
+GOOGLE_CLIENT_SECRET = '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'
 
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
