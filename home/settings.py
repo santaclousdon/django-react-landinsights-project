@@ -151,6 +151,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": ("rest_framework.parsers.JSONParser",),
 }
 
+GOOGLE_CLIENT_ID = '877580727759-84kvf4jrs48mer5ij51hkban3424ghv7.apps.googleusercontent.com'
+GOOGLE_CLIENT_SECRET = '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'
+
+
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
 
