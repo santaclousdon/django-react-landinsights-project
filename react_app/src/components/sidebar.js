@@ -8,6 +8,7 @@ const ROUTE_ICONS = {
     saved_filters: "filter",
     campaigns: "envelope-open-text",
     my_markets: "bullseye",
+    admin: "lock",
 };
 
 class NavItem extends Component {
@@ -61,6 +62,13 @@ export default class Sidebar extends Component {
         let nav_items = [];
         for (let item of internal_routes[0]["children"]) {
             if (item["path"] === "") {
+                continue;
+            }
+
+            if (
+                item["path"] === "admin" &&
+                (!window.secret_react_vars["user"] || !window.secret_react_vars["user"]["is_staff"])
+            ) {
                 continue;
             }
             nav_items.push(

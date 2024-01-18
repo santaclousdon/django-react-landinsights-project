@@ -57,6 +57,7 @@ class KanbanCard extends Component {
                     <Form
                         submit_url={`/api/notes/${item["id"]}/`}
                         defaults={{ text: item["text"] }}
+                        submit_on_enter={false}
                         submit_success={function (value) {
                             let notes = this.state.notes;
                             for (let item of notes) {
@@ -69,7 +70,7 @@ class KanbanCard extends Component {
                             });
                         }.bind(this)}
                     >
-                        <TextArea name="text" label={`Note Added: ${item["created_at"]}`} />
+                        <TextArea name="text" label={`Note Added: ${item["created_at"]}`} autosize={true} />
                     </Form>
                 );
             }
@@ -86,7 +87,7 @@ class KanbanCard extends Component {
                             });
                         }.bind(this)}
                     >
-                        <TextArea name="text" label="New Note" />
+                        <TextArea name="text" label="New Note" autosize={true} />
                     </Form>
                 );
             }

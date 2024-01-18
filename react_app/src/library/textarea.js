@@ -1,50 +1,90 @@
-import React from "react";
+import React, { Component } from "react";
 
-export default function TextInput(props) {
-    const style = props.style || {};
+export default class TextArea extends Component {
+    constructor(props) {
+        super(props);
 
-    let layout = "";
-    if (props.className) {
-        layout = props.className;
+        this.state = {
+            height: 0,
+        };
+
+        this.input_html = React.createRef();
+        this.handle_change = this.handle_change.bind(this);
+        this.update_height = this.update_height.bind(this);
     }
 
-    const layout_style = {
-        position: "relative",
-        ...props.layout_style,
-    };
-
-    let label = null;
-    if (props.label && props.label !== "") {
-        label = <label>{props.label}</label>;
+    componentDidMount() {
+        this.update_height();
     }
 
-    let value = props.default;
-    if (props.value) {
-        value = props.value;
+    componentDidUpdate(prevProps) {
+        if (this.props.value != prevProps.value) {
+            this.update_height();
+        }
     }
 
-    let input = (
-        <textarea
-            className="form-control"
-            name={props.name}
-            style={style}
-            value={value}
-            placeholder={props.placeholder}
-            autoComplete={props.autocomplete}
-            onChange={props.handle_change}
-        />
-    );
-
-    let icon = null;
-    if (props.right_hand_icon) {
-        icon = <div style={{ position: "absolute", top: "0px", right: "0px" }}>{props.right_hand_icon}</div>;
+    handle_change(value) {
+        this.props.handle_change(value);
     }
 
-    return (
-        <div className={`form-group ${layout}`} style={layout_style}>
-            {label}
-            {input}
-            {icon}
-        </div>
-    );
+    update_height() {
+        let html = this.input_html.current;
+        let height = html.scrollHeight;
+        this.setState({ height: height });
+    }
+
+    render() {
+        const style = this.props.style || {};
+        let no_scroll_class = "";
+        if (this.props.autosize) {
+            style["height"] = `${this.state.height}px`;
+            no_scroll_class = "no-scrollbar";
+        }
+
+        let layout = "";
+        if (this.props.className) {
+            layout = this.props.className;
+        }
+
+        const layout_style = {
+            position: "relative",
+            ...this.props.layout_style,
+        };
+
+        let label = null;
+        if (this.props.label && this.props.label !== "") {
+            label = <label>{this.props.label}</label>;
+        }
+
+        let value = this.props.default;
+        if (this.props.value) {
+            value = this.props.value;
+        }
+
+        let input = (
+            <textarea
+                ref={this.input_html}
+                className={`form-control ${no_scroll_class}`}
+                name={this.props.name}
+                style={style}
+                value={value}
+                placeholder={this.props.placeholder}
+                autoComplete={this.props.autocomplete}
+                onChange={this.handle_change}
+            />
+        );
+
+        let icon = null;
+        if (this.props.right_hand_icon) {
+            icon = <div style={{ position: "absolute", top: "0px", right: "0px" }}>{this.props.right_hand_icon}</div>;
+        }
+
+        return (
+            <div className={`form-group ${layout}`} style={layout_style}>
+                {label}
+                {input}
+                {icon}
+            </div>
+        );
+    }
 }

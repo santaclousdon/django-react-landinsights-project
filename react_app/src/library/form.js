@@ -89,6 +89,7 @@ class FormWithChildren extends Component {
         delete data.form_state;
         delete data.defaults;
         delete data.form_child_update_key;
+        delete data.form_is_saving_right_now;
         delete data.required;
 
         const new_state = {

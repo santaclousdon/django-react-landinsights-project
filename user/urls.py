@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from user.views import GetUser, GoogleLogin
+from user.views import GetUser, GetUsers, GoogleLogin
 
 urlpatterns = [
     # User authentication views
@@ -15,4 +15,5 @@ urlpatterns = [
     path("google_login/", GoogleLogin, name="GoogleLogin"),
 
     path("user/", GetUser, name="GetUser"),
+    path("users/", GetUsers, name="GetUsers"),
 ]

@@ -11,3 +11,5 @@ export { default as ContactUs } from "./contact_us.js";
 export { default as FeatureIdea } from "./feature_idea.js";
 export { default as MarketSelectionCourse } from "./market_selection_course.js";
 export { default as Subscription } from "./subscription.js";
+
+export { default as AdminDashboard } from "./admin.js";

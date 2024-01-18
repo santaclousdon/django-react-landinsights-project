@@ -120,6 +120,9 @@ function clear_token() {
     console.log("CLEARING TOKENS");
     localStorage.removeItem("token");
     localStorage.removeItem("refresh_token");
+
+    localStorage.setItem("login_redirect", window.location.pathname);
+
     window.location.href = "/login/";
 }
 

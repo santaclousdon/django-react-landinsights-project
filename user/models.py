@@ -58,6 +58,9 @@ class User(AbstractBaseUser):
     forced_password_reset = models.BooleanField(default=False)
     password_reset_code = models.CharField(max_length=40, default=uuid.uuid4)
 
+    lia_member = models.BooleanField(default=False)
+    beta = models.BooleanField(default=False)
+
     objects = UserManager()
 
     USERNAME_FIELD = "email"
@@ -77,3 +80,16 @@ class User(AbstractBaseUser):
         self.save()
 
         return random_string
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'company': self.companies.first().name,
+
+            'lia_member': self.lia_member,
+            'beta': self.beta,
+
+            'created_at': self.created_at.strftime('%m/%d/%Y'),
+            'last_login': self.last_login.strftime('%m/%d/%Y'),
+        }

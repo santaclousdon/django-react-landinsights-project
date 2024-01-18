@@ -1,6 +1,15 @@
 import { InternalLayout } from "components";
 
-import { Dashboard, SavedFilters, Campaigns, MarketSelectionCourse, Subscription, ContactUs, FeatureIdea } from "pages";
+import {
+    Dashboard,
+    SavedFilters,
+    Campaigns,
+    MarketSelectionCourse,
+    Subscription,
+    ContactUs,
+    FeatureIdea,
+    AdminDashboard,
+} from "pages";
 
 const routes = [
     {
@@ -42,6 +51,10 @@ const routes = [
             {
                 path: "feature_idea",
                 element: <FeatureIdea />,
+            },
+            {
+                path: "admin",
+                element: <AdminDashboard />,
             },
         ],
     },

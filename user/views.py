@@ -8,15 +8,40 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from user.models import User
 
 import requests
+import datetime
+from django.utils.timezone import now
+
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
 def GetUser(request):
     user = request.user
 
+    last_hour = now() - datetime.timedelta(hours=1)
+
+    if user.last_login < last_hour:
+        user.last_login = now()
+        user.save()
+
     return JsonResponse({
         'email': user.email,
+        'is_staff': user.is_staff,
         'company': user.companies.first().id,
+    })
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def GetUsers(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden()
+    
+    user_json = []
+    for user in User.objects.all():
+        user_json.append(user.to_json())
+
+    return JsonResponse({
+        'user_json': user_json,
     })
 
 
