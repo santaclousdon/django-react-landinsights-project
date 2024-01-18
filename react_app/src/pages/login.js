@@ -17,6 +17,7 @@ export default class Login extends Component {
 
         this.login = this.login.bind(this);
         this.google_login = this.google_login.bind(this);
+        this.google_error = this.google_error.bind(this);
         this.login_callback = this.login_callback.bind(this);
     }
 
@@ -25,6 +26,7 @@ export default class Login extends Component {
             client_id: GOOGLE_CLIENT_ID,
             scope: "email profile openid",
             callback: (response) => this.google_login(response),
+            error_callback: (response) => this.google_error(response),
         });
 
         this.setState({ client: client });
@@ -45,6 +47,10 @@ export default class Login extends Component {
             console.log("Token Detected");
             ajax_wrapper("POST", "/user/google_login/", state, this.login_callback);
         }
+    }
+
+    google_error(state) {
+        console.log("Google Error", state);
     }
 
     login_callback(value) {

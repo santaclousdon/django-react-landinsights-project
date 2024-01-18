@@ -121,7 +121,9 @@ function clear_token() {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh_token");
 
-    localStorage.setItem("login_redirect", window.location.pathname);
+    if (window.location.pathname != "/logout") {
+        localStorage.setItem("login_redirect", window.location.pathname);
+    }
 
     window.location.href = "/login/";
 }
