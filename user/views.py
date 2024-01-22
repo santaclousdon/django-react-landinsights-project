@@ -37,7 +37,7 @@ def GetUsers(request):
         return HttpResponseForbidden()
     
     user_json = []
-    for user in User.objects.all():
+    for user in User.objects.order_by('email').all():
         user_json.append(user.to_json())
 
     return JsonResponse({

@@ -22,10 +22,15 @@ export default class AdminDashboard extends Component {
             users_by_month: users_by_month,
         };
 
+        this.refresh_users = this.refresh_users.bind(this);
         this.load_users = this.load_users.bind(this);
     }
 
     componentDidMount() {
+        this.refresh_users();
+    }
+
+    refresh_users() {
         ajax_wrapper("GET", "/user/users/", {}, this.load_users);
     }
 
@@ -49,7 +54,11 @@ export default class AdminDashboard extends Component {
         return (
             <div>
                 <UsersChart users={this.state.users} users_by_month={this.state.users_by_month} />
-                <UsersTable users={this.state.users} users_by_month={this.state.users_by_month} />
+                <UsersTable
+                    users={this.state.users}
+                    users_by_month={this.state.users_by_month}
+                    refresh_users={this.refresh_users}
+                />
             </div>
         );
     }

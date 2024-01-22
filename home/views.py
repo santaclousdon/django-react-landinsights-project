@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
 from home.models import *
+from user.models import User
 
 from django.conf import settings
 import json
@@ -86,6 +87,22 @@ def ManageFilters(request, id=None):
 
     return JsonResponse(json_response, safe=False)
 
+
+@api_view(['GET', 'POST', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def ManageUsers(request, id=None):
+    if not request.user.is_staff:
+        return HttpResponseForbidden()
+    
+    json_response = {}
+    
+    json_response = handle_get_or_set_request(
+        request, 
+        User, 
+        id=id,
+    )
+
+    return JsonResponse(json_response, safe=False)
 
 
 def handle_get_or_set_request(request, model, id=None, many_get_relation=None):

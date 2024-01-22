@@ -45,7 +45,7 @@ export default class AGGrid extends Component {
 
         const gridOptions = {
             autoSizeStrategy: {
-                type: "fitCellContents"
+                type: "fitCellContents",
             },
         };
 
@@ -61,6 +61,8 @@ export default class AGGrid extends Component {
                     columnDefs={columns}
                     onFirstDataRendered={this.load_saved_filters}
                     onFilterChanged={this.handle_filter_change}
+                    onCellClicked={this.props.onCellClicked}
+                    selectionChanged={this.props.selectionChanged}
                 />
 
                 {/*<Button type="info" onClick={this.get_filters}>

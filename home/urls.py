@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from django.urls import include, path, re_path
-from home.views import Index, GetRegionData, ManageMarkets, ManageFilters, ManageMarketNotes
+from home.views import Index, GetRegionData, ManageMarkets, ManageFilters, ManageMarketNotes, ManageUsers
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -21,8 +21,12 @@ urlpatterns = [
 
     path("api/markets/", ManageMarkets, name='ManageMarkets'),
     path("api/markets/<uuid:id>/", ManageMarkets, name='ManageMarkets'),
+
     path("api/notes/", ManageMarketNotes, name='ManageMarketNotes'),
     path("api/notes/<uuid:id>/", ManageMarketNotes, name='ManageMarketNotes'),
+    
+    path("api/user/", ManageUsers, name='ManageUsers'),
+    path("api/users/<uuid:id>/", ManageUsers, name='ManageUsers'),
 
     path("api/filters/", ManageFilters, name='ManageFilters'),
     path("api/filters/<uuid:id>/", ManageFilters, name='ManageFilters'),
