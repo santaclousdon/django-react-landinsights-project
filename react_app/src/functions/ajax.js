@@ -121,7 +121,7 @@ function clear_token() {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh_token");
 
-    if (window.location.pathname != "/logout") {
+    if (!["/logout", "/login"].includes(window.location.pathname)) {
         localStorage.setItem("login_redirect", window.location.pathname);
     }
 
