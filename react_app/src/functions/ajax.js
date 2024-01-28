@@ -15,12 +15,15 @@ function ajax_wrapper(type, url, data, returnFunc) {
         data = JSON.stringify(data);
     }
 
-    let authToken = "Bearer ";
+    let authToken = "";
     let beforeSend = null;
     if (localStorage.getItem("token")) {
         authToken = `Bearer ${localStorage.getItem("token")}`;
+        beforeSend = (request) =>
+            function (request) {
+                request.setRequestHeader("Authorization", authToken);
+            };
     }
-    beforeSend = (request) => request.setRequestHeader("Authorization", authToken);
 
     $.ajax({
         type,
@@ -127,7 +130,7 @@ function clear_token() {
         localStorage.setItem("login_redirect", window.location.pathname);
     }
 
-    window.location.href = "/login/";
+    //window.location.href = "/login/";
 }
 
 function handle_error(xhr, status, error) {
