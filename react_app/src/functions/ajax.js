@@ -121,7 +121,9 @@ function clear_token() {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh_token");
 
-    if (!["/logout", "/login"].includes(window.location.pathname)) {
+    let cleaned_path = window.location.pathname.replace(/\//g, "");
+    let invalid_routes = ["", "logout", "login"];
+    if (!invalid_routes.includes(cleaned_path)) {
         localStorage.setItem("login_redirect", window.location.pathname);
     }
 
