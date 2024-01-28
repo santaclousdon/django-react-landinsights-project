@@ -15,12 +15,12 @@ function ajax_wrapper(type, url, data, returnFunc) {
         data = JSON.stringify(data);
     }
 
-    let authToken = "";
+    let authToken = "Bearer ";
     let beforeSend = null;
     if (localStorage.getItem("token")) {
         authToken = `Bearer ${localStorage.getItem("token")}`;
-        beforeSend = (request) => request.setRequestHeader("Authorization", authToken);
     }
+    beforeSend = (request) => request.setRequestHeader("Authorization", authToken);
 
     $.ajax({
         type,
