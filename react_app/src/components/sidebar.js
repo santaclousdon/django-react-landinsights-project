@@ -55,10 +55,16 @@ class NavItem extends Component {
 export default class Sidebar extends Component {
     constructor(props) {
         super(props);
+
         this.state = { error: "" };
     }
 
     render() {
+        let sidebar_class = "";
+        if (this.props.hidden) {
+            sidebar_class = "collapsed";
+        }
+
         let nav_items = [];
         for (let item of internal_routes[0]["children"]) {
             if (item["path"] === "") {
@@ -78,7 +84,7 @@ export default class Sidebar extends Component {
 
         return (
             <aside
-                className="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3"
+                className={`sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 ${sidebar_class}`}
                 id="sidenav-main"
             >
                 <div className="sidenav-header text-center">

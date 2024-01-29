@@ -60,3 +60,20 @@ body {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
+
+.navbar-vertical.navbar-expand-xs {
+    overflow: hidden;
+}
+
+.navbar-vertical.navbar-expand-xs .navbar-collapse {
+    overflow: hidden;
+}
+
+.navbar-vertical.navbar-expand-xs .navbar-nav .nav-link span {
+    transition: all 0.2s ease-in-out;
+    opacity: 1;
+}
+
+.navbar-vertical.navbar-expand-xs.collapsed .navbar-nav .nav-link span {
+    opacity: 0;
+}

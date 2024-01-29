@@ -4,6 +4,10 @@ import { prettify_string } from "functions";
 import { Button } from "library";
 
 export default class Navbar extends Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         let crumbs = [];
         let path = this.props.current_path;
@@ -31,9 +35,14 @@ export default class Navbar extends Component {
         }
         crumbs.push(last_crumb);
 
+        let navbar_class = "shadow-none";
+        if (this.props.scrolled) {
+            navbar_class = "blur shadow-blur left-auto";
+        }
+
         return (
             <nav
-                className="navbar navbar-main navbar-expand-lg mt-4 top-1 px-0 mx-4 shadow-none border-radius-xl z-index-sticky"
+                className={`navbar navbar-main navbar-expand-lg position-sticky mt-4 top-1 px-0 mx-4 border-radius-xl z-index-sticky ${navbar_class}`}
                 id="navbarBlur"
                 data-scroll="true"
             >
@@ -41,15 +50,21 @@ export default class Navbar extends Component {
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">{crumbs}</ol>
                     </nav>
-                    {/* <div className="sidenav-toggler sidenav-toggler-inner d-xl-block d-none">
-                        <a href="javascript:;" className="nav-link text-body p-0">
+                    <div
+                        className="sidenav-toggler sidenav-toggler-inner d-xl-block d-none"
+                        onClick={this.props.toggle_sidebar}
+                    >
+                        <a className="nav-link text-body p-0" style={{ cursor: "pointer" }}>
                             <div className="sidenav-toggler-inner">
                                 <i className="sidenav-toggler-line"></i>
                                 <i className="sidenav-toggler-line"></i>
                                 <i className="sidenav-toggler-line"></i>
                             </div>
                         </a>
-                    </div> */}
+                    </div>
+
+                    <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
+
                     <div style={{ float: "right" }}>
                         <Button style={{ margin: "0px" }} href={`/logout`} type="outline-secondary">
                             Logout
