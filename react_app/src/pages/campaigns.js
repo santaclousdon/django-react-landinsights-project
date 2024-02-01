@@ -4,6 +4,7 @@ import Board from "@asseinfo/react-kanban";
 import "@asseinfo/react-kanban/dist/styles.css";
 
 import { ajax_wrapper } from "functions";
+import { Loading } from "components";
 import { Form, TextArea, Modal, Select } from "library";
 
 import { TIME_SCALES, ACRE_RANGES, GEO_SCALES } from "../constants";
@@ -44,64 +45,55 @@ class KanbanCard extends Component {
 
         this.state = {
             show_notes: false,
-            notes: this.props.card.data["notes"],
         };
     }
 
     render() {
+        let notes = [];
+        for (let item of this.props.card.data["notes"]) {
+            notes.push(
+                <Form
+                    submit_url={`/api/notes/${item["id"]}/`}
+                    defaults={{ text: item["text"] }}
+                    submit_on_enter={false}
+                    submit_success={function (value) {
+                        this.props.refresh_markets();
+                        this.setState({ show_notes: false });
+                    }.bind(this)}
+                >
+                    <h4>Edit Note</h4>
+                    <TextArea name="text" autosize={true} />
+                    <div className="form-group" style={{ fontSize: "12px", textAlign: "left" }}>
+                        <div>{`Note Added: ${item["created_at"]}`}</div>
+                        <div>{`Last Edited: ${item["updated_at"]}`}</div>
+                    </div>
+                </Form>
+            );
+        }
+        if (notes.length == 0) {
+            notes.push(
+                <Form
+                    submit_url="/api/notes/"
+                    defaults={{ market_id: this.props.card.data["id"] }}
+                    submit_success={function (value) {
+                        this.props.refresh_markets();
+                        this.setState({ show_notes: false });
+                    }.bind(this)}
+                >
+                    <TextArea name="text" label="New Note" autosize={true} />
+                </Form>
+            );
+        }
+
         let modal = null;
         if (this.state.show_notes) {
-            let notes = [];
-            for (let item of this.state.notes) {
-                notes.push(
-                    <Form
-                        submit_url={`/api/notes/${item["id"]}/`}
-                        defaults={{ text: item["text"] }}
-                        submit_on_enter={false}
-                        submit_success={function (value) {
-                            let notes = this.state.notes;
-                            for (let item of notes) {
-                                if (item["id"] == value["id"]) {
-                                    item = value;
-                                }
-                            }
-                            this.setState({
-                                notes: notes,
-                            });
-                        }.bind(this)}
-                    >
-                        <TextArea name="text" label={`Note Added: ${item["created_at"]}`} autosize={true} />
-                    </Form>
-                );
-            }
-            if (notes.length == 0) {
-                notes.push(
-                    <Form
-                        submit_url="/api/notes/"
-                        defaults={{ market_id: this.props.card.data["id"] }}
-                        submit_success={function (value) {
-                            let notes = this.state.notes;
-                            notes.push(value);
-                            this.setState({
-                                notes: notes,
-                            });
-                        }.bind(this)}
-                    >
-                        <TextArea name="text" label="New Note" autosize={true} />
-                    </Form>
-                );
-            }
-            modal = (
-                <Modal show={true} on_hide={() => this.setState({ show_notes: false })}>
-                    {notes}
-                </Modal>
-            );
+            modal = <Modal show={true}>{notes}</Modal>;
         }
 
         return (
             <div>
                 {modal}
-                <div class="react-kanban-card " onClick={() => this.setState({ show_notes: true })}>
+                <div class="react-kanban-card " onClick={() => this.setState({ show_notes: !this.state.show_notes })}>
                     <div class="react-kanban-card-title">
                         <h4>{this.props.card.title}</h4>
                     </div>
@@ -204,6 +196,7 @@ export default class Campgians extends Component {
             error: "",
             loaded: false,
             markets: [],
+            market_timestamp: Date.now(),
 
             acre_range: Object.keys(ACRE_RANGES)[0],
         };
@@ -217,7 +210,20 @@ export default class Campgians extends Component {
     }
 
     refresh_markets() {
-        ajax_wrapper("GET", "/api/markets/", {}, (value) => this.setState({ markets: value, loaded: true }));
+        this.setState(
+            {
+                loaded: false,
+            },
+            function () {
+                ajax_wrapper("GET", "/api/markets/", {}, (value) =>
+                    this.setState({
+                        markets: value,
+                        loaded: true,
+                        market_timestamp: Date.now(),
+                    })
+                );
+            }.bind(this)
+        );
     }
 
     handle_drag(board, card, prev, next) {
@@ -256,8 +262,11 @@ export default class Campgians extends Component {
         if (this.state.loaded) {
             kanban = (
                 <Board
+                    key={this.state.market_timestamp}
                     initialBoard={board}
-                    renderCard={(card, { removeCard, dragging }) => <KanbanCard card={card} />}
+                    renderCard={(card, { removeCard, dragging }) => (
+                        <KanbanCard card={card} refresh_markets={this.refresh_markets} />
+                    )}
                     onCardDragEnd={this.handle_drag}
                 />
             );
@@ -265,6 +274,7 @@ export default class Campgians extends Component {
 
         return (
             <div>
+                <Loading loaded={this.state.loaded} />
                 <div className="card mb-5">
                     <div className="card-header">
                         <div style={{ width: "200px" }}>

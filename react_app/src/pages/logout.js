@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 
 import { clear_token } from "functions";
-
-// @mui material components
-import Card from "@mui/material/Card";
+import { Card } from "library";
 
 export default class Logout extends Component {
     componentDidMount() {

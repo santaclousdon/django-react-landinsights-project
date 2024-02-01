@@ -66,9 +66,26 @@ export default class Navbar extends Component {
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
 
                     <div style={{ float: "right" }}>
-                        <Button style={{ margin: "0px" }} href={`/logout`} type="outline-secondary">
-                            Logout
-                        </Button>
+                        <ul class="navbar-nav  justify-content-end">
+                            <li class="nav-item d-xl-none d-flex align-items-center">
+                                <a
+                                    style={{ cursor: "pointer" }}
+                                    class="nav-link text-body p-0"
+                                    onClick={this.props.toggle_sidebar_pin}
+                                >
+                                    <div class="sidenav-toggler-inner">
+                                        <i class="sidenav-toggler-line"></i>
+                                        <i class="sidenav-toggler-line"></i>
+                                        <i class="sidenav-toggler-line"></i>
+                                    </div>
+                                </a>
+                            </li>
+                            <li className="nav-item d-flex ps-3 align-items-center">
+                                <Button style={{ margin: "0px" }} href={`/logout`} type="outline-secondary">
+                                    Logout
+                                </Button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>

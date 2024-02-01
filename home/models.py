@@ -64,7 +64,8 @@ class SavedMarket(BaseModel):
             'region': self.region.to_json(),
             'notes': [note.to_json() for note in self.notes.order_by('created_at').all()],
             'status': self.status,
-            'created_at': self.created_at.strftime('%m/%d/%Y')
+            'created_at': self.created_at.strftime('%m/%d/%Y'),
+            'updated_at': self.updated_at.strftime('%m/%d/%Y'),
         }
 
 
@@ -77,7 +78,8 @@ class SavedMarketNote(BaseModel):
         return {
             'id': self.id,
             'text': self.text,
-            'created_at': self.created_at.strftime('%m/%d/%Y')
+            'created_at': self.created_at.strftime('%m/%d/%Y'),
+            'updated_at': self.updated_at.strftime('%m/%d/%Y'),
         }
 
 
