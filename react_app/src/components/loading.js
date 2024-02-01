@@ -26,12 +26,12 @@ export default class Loading extends Component {
                     background: "#f5f5f5",
                 }}
             >
-                <div class="spinner-grow" role="status" style={{ margin: "10px" }}>
+                <div class="spinner-grow text-info" role="status" style={{ margin: "10px" }}>
                     <span class="sr-only">Loading...</span>
                 </div>
 
                 <div
-                    class="spinner-grow"
+                    class="spinner-grow text-info"
                     role="status"
                     style={{
                         animationDelay: "150ms",
@@ -42,7 +42,7 @@ export default class Loading extends Component {
                 </div>
 
                 <div
-                    class="spinner-grow"
+                    class="spinner-grow text-info"
                     role="status"
                     style={{
                         animationDelay: "300ms",

@@ -77,3 +77,7 @@ body {
 .navbar-vertical.navbar-expand-xs.collapsed .navbar-nav .nav-link span {
     opacity: 0;
 }
+
+.swal2-container .swal2-close:focus {
+    box-shadow: none;
+}
