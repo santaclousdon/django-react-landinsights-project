@@ -61,7 +61,11 @@ class KanbanCard extends Component {
                         this.setState({ show_notes: false });
                     }.bind(this)}
                 >
-                    <h4>Edit Note</h4>
+
+
+                    <h6 class="mb-0">Edit Note</h6>
+                    <hr class="horizontal dark my-3"></hr>
+
                     <TextArea name="text" autosize={true} />
                     <div className="form-group" style={{ fontSize: "12px", textAlign: "left" }}>
                         <div>{`Note Added: ${item["created_at"]}`}</div>
