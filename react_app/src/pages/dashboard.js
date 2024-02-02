@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { MapboxMap, AGGrid, ToggleGroup } from "components";
+import { MapboxMap, AGGrid, ToggleGroup, Loading } from "components";
 import { Button, Select, Form, TextInput, Modal, JSONRender } from "library";
 
 import { ajax_wrapper, get_url } from "functions";
@@ -185,6 +185,7 @@ export default class Dashboard extends Component {
                     region_data: value,
                     data_timestamp: Date.now(),
                     table_rows: table_rows,
+                    loaded: true,
                 });
             }.bind(this)
         );
@@ -358,6 +359,7 @@ export default class Dashboard extends Component {
 
         return (
             <div>
+                <Loading loaded={this.state.loaded} />
                 <div className="card mb-5">
                     <div className="card-body">
                         <div className="row justify-content-center mb-5">

@@ -13,7 +13,12 @@ function get_all_children(component, parentFunctions, formState) {
         if (formState) {
             dataMapping = getFormProps(formState, childComponent, dataMapping, index, component.props.autoFocus);
         }
-        dataMapping.children = get_all_children(childComponent, formState);
+
+        if (typeof childComponent.props.children === "string" || childComponent.props.children instanceof String) {
+            //The child is a string and should not be overwritten
+        } else {
+            dataMapping.children = get_all_children(childComponent, formState);
+        }
 
         const componentInstance = React.cloneElement(childComponent, dataMapping);
         components.push(componentInstance);

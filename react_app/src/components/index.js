@@ -11,3 +11,5 @@ export { default as ToggleGroup } from "./toggle_group.js";
 
 export { default as UsersChart } from "./admin/user_chart.js";
 export { default as UsersTable } from "./admin/user_table.js";
+
+export { default as Loading } from "./loading.js";

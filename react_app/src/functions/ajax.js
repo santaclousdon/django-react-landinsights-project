@@ -127,7 +127,7 @@ function clear_token() {
         localStorage.setItem("login_redirect", window.location.pathname);
     }
 
-    window.location.href = "/login/";
+    window.location.href = "/login";
 }
 
 function handle_error(xhr, status, error) {
