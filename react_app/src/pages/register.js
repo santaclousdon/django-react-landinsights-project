@@ -8,7 +8,7 @@ import { ajax_wrapper, save_token } from "functions";
 const GOOGLE_CLIENT_ID =
   "297720701797-4r7ijvdjgu5e7tf23jto6g4dqm8k23cs.apps.googleusercontent.com";
 
-export default class Login extends Component {
+export default class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,37 +16,36 @@ export default class Login extends Component {
       error: "",
     };
 
-    this.login = this.login.bind(this);
-    this.google_login = this.google_login.bind(this);
+    this.signup = this.signup.bind(this);
+    this.google_signup = this.google_signup.bind(this);
     this.google_error = this.google_error.bind(this);
-    this.login_callback = this.login_callback.bind(this);
+    this.signup_callback = this.signup_callback.bind(this);
   }
 
   componentDidMount() {
     let client = window.google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
       scope: "email profile openid",
-      callback: (response) => this.google_login(response),
+      callback: (response) => this.google_signup(response),
       error_callback: (response) => this.google_error(response),
     });
 
     this.setState({ client: client });
   }
 
-  login(state) {
+  signup(state) {
     let data = {
+      name: state["name"],
       email: state["email"],
       password: state["password"],
     };
-    ajax_wrapper("POST", "/user/token/", data, this.login_callback);
+
+    ajax_wrapper("POST", "/user/register/", data, this.signup_callback);
   }
 
-  google_login(state) {
-    console.log(state);
-
+  google_signup(state) {
     if (state && state.access_token) {
-      console.log("Token Detected");
-      ajax_wrapper("POST", "/user/google_login/", state, this.login_callback);
+      ajax_wrapper("POST", "/user/google_login/", state, this.signup_callback);
     }
   }
 
@@ -54,16 +53,13 @@ export default class Login extends Component {
     console.log("Google Error", state);
   }
 
-  login_callback(value) {
-    let url = "/home";
-    save_token(value);
-
-    if (localStorage.getItem("login_redirect")) {
-      url = localStorage.getItem("login_redirect");
-      localStorage.removeItem("login_redirect");
+  signup_callback(value) {
+    if (value.error) {
+      window.location.href = "/register";
+    } else {
+      save_token(value);
+      window.location.href = "/home";
     }
-
-    window.location.href = url;
   }
 
   render() {
@@ -72,7 +68,7 @@ export default class Login extends Component {
       google_button = (
         <Button
           onClick={() => this.state.client.requestAccessToken()}
-          style={{ width: "100%" }}
+          style={{ width: "100%", border: "solid 1px #e9ecef" }}
         >
           <div
             style={{
@@ -81,7 +77,7 @@ export default class Login extends Component {
               lineHeight: "20px",
             }}
           >
-            {"Login with Google"}
+            {"Signup with Google"}
           </div>
           <img
             style={{
@@ -98,20 +94,35 @@ export default class Login extends Component {
     return (
       <Card>
         <div className="card-header text-center pt-4">
-          <h5>Sign in</h5>
+          <h5>Sign up</h5>
+        </div>
+        <div style={{ padding: "0 1.5rem" }}>
+          {google_button}
+          <div className="mt-2 position-relative text-center">
+            <p className="text-sm font-weight-bold mb-2 text-secondary text-border d-inline z-index-2 bg-white  px-3">
+              or
+            </p>
+          </div>
         </div>
         <div className="card-body">
           <Form
-            submit={this.login}
+            submit={this.signup}
             submit_button_type="gradient-info"
             submit_button_class={"w-100 my-4 mb-2"}
+            submit_text={"SIGN UP"}
           >
+            <TextInput name="name" placeholder="Name" />
             <TextInput name="email" placeholder="Email" />
             <TextInput type="password" name="password" placeholder="Password" />
           </Form>
-
+          <p className="text-sm mt-3 mb-0">
+            Already have an account?
+            <a className="text-dark font-weight-bolder" href="./login">
+              {" "}
+              Sign in
+            </a>
+          </p>
           <br />
-          {google_button}
         </div>
       </Card>
     );

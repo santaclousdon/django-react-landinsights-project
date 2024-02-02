@@ -1,6 +1,7 @@
 import { ExternalLayout } from "components";
 
 import { Landing, Login, Logout } from "pages";
+import Register from "pages/register";
 
 function set_page_details(title, description, image) {
     if (!window.secret_react_vars) {
@@ -38,6 +39,17 @@ const routes = [
                     return set_page_details(
                         "Welcome to Land Insights",
                         "Login Here",
+                        "/static/template_assets/img/curved-images/curved9.jpg"
+                    );
+                },
+            },
+            {
+                path: "register",
+                element: <Register />,
+                loader: async ({ request, params }) => {
+                    return set_page_details(
+                        "Welcome to Land Insights",
+                        "Register Here",
                         "/static/template_assets/img/curved-images/curved9.jpg"
                     );
                 },

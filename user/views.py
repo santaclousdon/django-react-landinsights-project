@@ -11,6 +11,13 @@ import requests
 import datetime
 from django.utils.timezone import now
 
+import string
+import random
+import json
+from django.contrib.auth.hashers import make_password
+
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
@@ -29,7 +36,6 @@ def GetUser(request):
         'company': user.companies.first().id,
     })
 
-
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
 def GetUsers(request):
@@ -45,24 +51,36 @@ def GetUsers(request):
     })
 
 
+def generate_random_password(length=12):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(characters) for i in range(length))
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def GoogleLogin(request):
     json_data = request.data
-    print('json_data', json_data)
 
     response = requests.get('https://www.googleapis.com/oauth2/v3/userinfo?access_token=%s' % (json_data['access_token']))
     data = response.json()
-    print(data)
+
+    raw_password = generate_random_password()
 
     if 'email' in data:
-        user = User.objects.get(email=data['email'])
-        if user:
+        try :
+            user = User.objects.get(email=data['email'])
+            if user:
+                return JsonResponse(get_tokens_for_user(user))
+        except Exception as e:
+            name = data.get('name')
+            email = data.get('email')
+            password = make_password(raw_password)
+            print(password)
+            user = User.objects.create(name=name, email=email, password=password)
+            user.save()
             return JsonResponse(get_tokens_for_user(user))
 
     return HttpResponseForbidden()
-
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -71,3 +89,39 @@ def get_tokens_for_user(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
+
+@api_view(['POST'])
+@permission_classes((AllowAny, ))
+def RegisterUser(request):
+    try:
+        body_unicode = request.body.decode('utf-8')
+        data = json.loads(body_unicode)
+        name = data.get('name')
+        email = data.get('email')
+        password = data.get('password')
+
+        if not name or not email or not password:
+            return JsonResponse({'error': 'Missing fields'}, status=400)
+
+        try:
+            validate_email(email)
+
+        except ValidationError:
+            return JsonResponse({'error': 'Enter a valid email address.'}, status=400)
+
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user:
+            return JsonResponse({'error': 'A user with that email already exists.'}, status=400)
+
+        hashed_password = make_password(password)
+
+        user = User.objects.create(name=name, email=email.lower(), password=hashed_password)
+
+        user.save()
+
+        return JsonResponse(get_tokens_for_user(user))
+    except KeyError as e:
+        return JsonResponse({'error': str(e) + ' is required.'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': 'Something went wrong during registration.'}, status=500)

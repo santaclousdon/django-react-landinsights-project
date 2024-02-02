@@ -5,7 +5,6 @@ from django.apps import apps
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-
 class UserManager(BaseUserManager):
     def create_user(self, email, password):
         # Creates and saves a User with the given email and password.
@@ -25,8 +24,8 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password, **extra_fields):
-        u = self.create_user(email, password, **extra_fields)
+    def create_superuser(self, email, name, password, **extra_fields):
+        u = self.create_user(email, password, name, **extra_fields)
 
         u.is_staff = True
         u.is_active = True
@@ -68,6 +67,8 @@ class User(AbstractBaseUser):
 
     # Only email and password is required to create a user account but this is how you'd require other fields.
     REQUIRED_FIELDS = ["password"]
+    REQUIRED_FIELDS = ["name"]
+
 
     def get_password_reset_code(self):
         random_string = uuid.uuid4()
@@ -85,6 +86,7 @@ class User(AbstractBaseUser):
         return {
             'id': self.id,
             'email': self.email,
+            'name': self.name,
             'company': self.companies.first().name,
 
             'lia_member': self.lia_member,
@@ -93,3 +95,4 @@ class User(AbstractBaseUser):
             'created_at': self.created_at.strftime('%m/%d/%Y'),
             'last_login': self.last_login.strftime('%m/%d/%Y'),
         }
+    

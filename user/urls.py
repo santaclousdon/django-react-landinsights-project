@@ -1,11 +1,11 @@
-from django.urls import include, path
+from django.urls import path
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
-from user.views import GetUser, GetUsers, GoogleLogin
+from user.views import GetUser, GetUsers, GoogleLogin, RegisterUser
 
 urlpatterns = [
     # User authentication views
@@ -16,4 +16,6 @@ urlpatterns = [
 
     path("user/", GetUser, name="GetUser"),
     path("users/", GetUsers, name="GetUsers"),
+
+    path("register/", RegisterUser, name="RegisterUser"),
 ]
