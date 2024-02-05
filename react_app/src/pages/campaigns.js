@@ -60,6 +60,7 @@ class KanbanCard extends Component {
                         this.props.refresh_markets();
                         this.setState({ show_notes: false });
                     }.bind(this)}
+                    submit_button_float={{ float: 'right' }}
                 >
                     <h6 class="mb-0">Edit Note</h6>
                     <hr class="horizontal dark my-3"></hr>

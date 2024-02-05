@@ -23,7 +23,7 @@ export default class ToolTipBox extends React.Component {
                 </tr>);
             }
 
-            content = <div style={{ position: 'absolute', top: '0px', right: '0px' }} >
+            content = <div style={{ position: 'absolute', top: '0px', left: '0px' }} >
                 <div style={{ background: 'white', whiteSpace: 'nowrap', margin: '.5rem', padding: '1rem', borderRadius: '4px' }} >
                     <div style={{ fontSize: '14px', paddingBottom: '5px' }} ><b>{`${data['name']}, ${data['state']}`}</b></div>
                     <table style={{ width: '100%' }}>

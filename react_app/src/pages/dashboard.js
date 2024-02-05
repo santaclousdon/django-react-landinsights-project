@@ -362,6 +362,7 @@ export default class Dashboard extends Component {
                         submit_url="/api/filters/"
                         defaults={this.state.saving_filter}
                         submit_success={(value) => this.setState({ saving_filter: null, filters_saved: true })}
+                        submit_button_float={{ float: 'right' }}
                     >
                         <TextInput name="name" label="Filter Name" />
                     </Form>

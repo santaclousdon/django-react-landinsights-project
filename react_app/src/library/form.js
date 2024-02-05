@@ -234,15 +234,12 @@ class FormWithChildren extends Component {
       let submit_button_type =
         this.props.submit_button_type || "gradient-success";
 
-      float = { float: "left" };
-      let submit_disabled = {};
+      float = this.props.submit_button_float ? this.props.submit_button_float : { float: "left" };
 
       // Anti-mash behavior for form.  This will force users to wait until callback functions have completed
       // and ensure the form is submitted properly
-
-      if (this.props.receive) {
-        submit_disabled = {};
-      } else {
+      let submit_disabled = {};
+      if (this.props.waiting_for_external_response) {
         submit_disabled = { disabled: "disabled" };
       }
 

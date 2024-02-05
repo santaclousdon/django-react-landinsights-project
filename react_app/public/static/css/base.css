@@ -11,11 +11,12 @@ body {
     transform: scaleY(0);
     transition: 0.2s ease;
 }
+
 .height-animate.show {
     transform: scaleY(1);
 }
 
-.navbar-vertical .navbar-nav > .nav-item .inner-nav .nav-link {
+.navbar-vertical .navbar-nav>.nav-item .inner-nav .nav-link {
     color: #344767;
     background-color: #fff;
     position: relative;
@@ -23,7 +24,7 @@ body {
     box-shadow: none;
 }
 
-.navbar-vertical .navbar-nav > .nav-item .inner-nav .nav-link:before {
+.navbar-vertical .navbar-nav>.nav-item .inner-nav .nav-link:before {
     content: "";
     position: absolute;
     left: -18px;
@@ -38,6 +39,7 @@ body {
 .navbar-vertical .navbar-nav .nav-item .nav-link .icon i {
     color: #ccc;
 }
+
 .navbar-vertical .navbar-nav .nav-item .nav-link.active .icon i {
     color: white;
 }
@@ -46,6 +48,7 @@ body {
     box-shadow: none;
     margin-bottom: 0px;
 }
+
 .btn-group {
     box-shadow: 0 4px 7px -1px rgba(0, 0, 0, 0.11), 0 2px 4px -1px rgba(0, 0, 0, 0.07);
 }
@@ -57,8 +60,10 @@ body {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .navbar-vertical.navbar-expand-xs {
@@ -80,4 +85,9 @@ body {
 
 .swal2-container .swal2-close:focus {
     box-shadow: none;
+}
+
+
+.swal2-container .swal2-html-container {
+    overflow-x: hidden;
 }
