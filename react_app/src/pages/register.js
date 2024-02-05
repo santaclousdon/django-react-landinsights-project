@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import { Form, TextInput, Card, Button } from "library";
 import { ajax_wrapper, save_token } from "functions";
+import Swal from "sweetalert2";
 
 // GOOGLE OAUTH USES THIS DOCUMENTATION!!!!
 // https://developers.google.com/identity/oauth2/web/guides/use-token-model
@@ -14,6 +15,7 @@ export default class Register extends Component {
     this.state = {
       client: null,
       error: "",
+      receive_response: true,
     };
 
     this.signup = this.signup.bind(this);
@@ -41,6 +43,7 @@ export default class Register extends Component {
     };
 
     ajax_wrapper("POST", "/user/register/", data, this.signup_callback);
+    this.setState({ receive_response: false });
   }
 
   google_signup(state) {
@@ -54,8 +57,14 @@ export default class Register extends Component {
   }
 
   signup_callback(value) {
-    if (value.error) {
-      window.location.href = "/register";
+    console.log(value.responseJSON);
+    if (value.responseJSON) {
+      Swal.fire({
+        title: "Warning",
+        text: value.responseJSON.error,
+        icon: "error",
+        confirmButtonText: "OK",
+      }).then(() => this.setState({ receive_response: true }));
     } else {
       save_token(value);
       window.location.href = "/home";
@@ -110,6 +119,7 @@ export default class Register extends Component {
             submit_button_type="gradient-info"
             submit_button_class={"w-100 my-4 mb-2"}
             submit_text={"SIGN UP"}
+            receive={this.state.receive_response}
           >
             <TextInput name="name" placeholder="Name" />
             <TextInput name="email" placeholder="Email" />

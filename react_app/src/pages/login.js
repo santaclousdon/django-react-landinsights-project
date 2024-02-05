@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import { Form, TextInput, Card, Button } from "library";
 import { ajax_wrapper, save_token } from "functions";
+import Swal from "sweetalert2";
 
 // GOOGLE OAUTH USES THIS DOCUMENTATION!!!!
 // https://developers.google.com/identity/oauth2/web/guides/use-token-model
@@ -14,6 +15,8 @@ export default class Login extends Component {
     this.state = {
       client: null,
       error: "",
+      data: {},
+      receive_response: true,
     };
 
     this.login = this.login.bind(this);
@@ -39,6 +42,8 @@ export default class Login extends Component {
       password: state["password"],
     };
     ajax_wrapper("POST", "/user/token/", data, this.login_callback);
+    this.setState({ receive_response: false });
+    this.setState({ data: data });
   }
 
   google_login(state) {
@@ -55,15 +60,30 @@ export default class Login extends Component {
   }
 
   login_callback(value) {
-    let url = "/home";
-    save_token(value);
+    if (!(this.state.data.email && this.state.data.password) || value.error) {
+      let text;
+      if (!this.state.data.email) {
+        text = "Email field is missing";
+      }
 
-    if (localStorage.getItem("login_redirect")) {
-      url = localStorage.getItem("login_redirect");
-      localStorage.removeItem("login_redirect");
+      if (!this.state.data.password) {
+        text = "Password field is missing";
+      }
+
+      if (value.error) {
+        text = value.error;
+      }
+
+      Swal.fire({
+        title: "Warning",
+        text: text,
+        icon: "error",
+        confirmButtonText: "OK",
+      }).then(() => this.setState({ receive_response: true }));
+    } else {
+      save_token(value);
+      window.location.href = "/home";
     }
-
-    window.location.href = url;
   }
 
   render() {
@@ -105,6 +125,7 @@ export default class Login extends Component {
             submit={this.login}
             submit_button_type="gradient-info"
             submit_button_class={"w-100 my-4 mb-2"}
+            receive={this.state.receive_response}
           >
             <TextInput name="email" placeholder="Email" />
             <TextInput type="password" name="password" placeholder="Password" />
