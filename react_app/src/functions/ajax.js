@@ -2,7 +2,7 @@ import $ from "jquery";
 
 function ajax_wrapper(type, url, data, returnFunc) {
     // Routing to Django on development
-    if (window.location.hostname === "localhost") {
+    if (window.location.hostname === "localhost" && !url.includes('http://localhost:8000')) {
         url = "http://localhost:8000" + url;
     }
 
@@ -45,7 +45,7 @@ function ajax_wrapper(type, url, data, returnFunc) {
                 }
             },
             401(xhr) {
-                if (url.endsWith("/users/token/")) {
+                if (url.endsWith("/user/token/")) {
                     var value = { error: "Invalid Credentials" };
                     if (returnFunc) {
                         returnFunc(value);
@@ -65,9 +65,14 @@ function ajax_wrapper(type, url, data, returnFunc) {
 }
 
 function refresh_token(type, url, data, responseJSON, returnFunc) {
-    if (url === "/users/user/" && responseJSON.code === "user_not_found") {
+    if (url === "/user/user/" && responseJSON.code === "user_not_found") {
         clear_token();
         return false;
+    }
+
+    let refresh_url = "/user/token/refresh/";
+    if (window.location.hostname === "localhost") {
+        refresh_url = "http://localhost:8000" + refresh_url;
     }
 
     let refreshData = {};
@@ -78,6 +83,7 @@ function refresh_token(type, url, data, responseJSON, returnFunc) {
         refreshData.refresh = localStorage.getItem("refresh_token");
     }
 
+    console.log('Refreshing Token', refreshData)
     refreshData = JSON.stringify(refreshData);
 
     // Revert data to JSON for POST and PUT requests
@@ -87,7 +93,7 @@ function refresh_token(type, url, data, responseJSON, returnFunc) {
 
     return $.ajax({
         type: "POST",
-        url: "/user/token/refresh/",
+        url: refresh_url,
         contentType: "application/json",
         data: refreshData,
         statusCode: {
@@ -112,7 +118,9 @@ function refresh_token(type, url, data, responseJSON, returnFunc) {
 
 function save_token(value) {
     localStorage.setItem("token", value.access);
-    localStorage.setItem("refresh_token", value.refresh);
+    if (value.refresh) {
+        localStorage.setItem("refresh_token", value.refresh);
+    }
     localStorage.setItem("token_time", new Date());
 }
 
