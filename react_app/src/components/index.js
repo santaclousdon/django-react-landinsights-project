@@ -2,6 +2,7 @@ export { default as ExternalLayout } from "./external_layout.js";
 export { default as InternalLayout } from "./internal_layout.js";
 
 export { default as MapboxMap } from "./mapbox_map.js";
+export { default as ToolTipBox } from "./mapbox_tooltip.js";
 
 export { default as AGGrid } from "./ag_grid.js";
 
