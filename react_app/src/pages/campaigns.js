@@ -61,8 +61,6 @@ class KanbanCard extends Component {
                         this.setState({ show_notes: false });
                     }.bind(this)}
                 >
-
-
                     <h6 class="mb-0">Edit Note</h6>
                     <hr class="horizontal dark my-3"></hr>
 
