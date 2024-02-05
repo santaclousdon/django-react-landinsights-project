@@ -26,15 +26,11 @@ def GetUser(request):
 
     last_hour = now() - datetime.timedelta(hours=1)
 
-    if user.last_login < last_hour:
+    if not user.last_login or user.last_login < last_hour:
         user.last_login = now()
         user.save()
 
-    return JsonResponse({
-        'email': user.email,
-        'is_staff': user.is_staff,
-        'company': user.companies.first().id,
-    })
+    return JsonResponse(user.to_json())
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
