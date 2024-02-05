@@ -65,7 +65,7 @@ class KanbanCard extends Component {
                     <hr class="horizontal dark my-3"></hr>
 
                     <TextArea name="text" autosize={true} />
-                    <div className="form-group" style={{ fontSize: "12px", textAlign: "left" }}>
+                    <div className="form-group" style={{ fontSize: "12px", textAlign: "center" }}>
                         <div>{`Note Added: ${item["created_at"]}`}</div>
                         <div>{`Last Edited: ${item["updated_at"]}`}</div>
                     </div>

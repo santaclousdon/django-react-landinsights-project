@@ -97,10 +97,11 @@ export default class Dashboard extends Component {
                 time_scale: TIME_SCALES[0],
                 acre_range: Object.keys(ACRE_RANGES)[0],
                 visual_field: "Active",
-                table_rows: [],
             },
+
             region_data: [],
             markets: [],
+            table_rows: [],
 
             filter_data: {},
             filters_saved: false,
