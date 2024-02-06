@@ -16,7 +16,8 @@ export default class Login extends Component {
       client: null,
       error: "",
       data: {},
-      receive_response: true,
+
+      waiting_for_response: false,
     };
 
     this.login = this.login.bind(this);
@@ -41,9 +42,29 @@ export default class Login extends Component {
       email: state["email"],
       password: state["password"],
     };
-    ajax_wrapper("POST", "/user/token/", data, this.login_callback);
-    this.setState({ receive_response: false });
-    this.setState({ data: data });
+
+    let text = '';
+    // Validate for before submitting
+    if (!state['email']) {
+      text = "Email field is missing";
+    }
+
+    else if (!state['password']) {
+      text = "Password field is missing";
+    }
+
+    if (text) {
+      this.fire_swal_error(text);
+    }
+    else {
+      this.setState(
+        { waiting_for_response: true, data: data },
+        function () {
+          ajax_wrapper("POST", "/user/token/", data, this.login_callback);
+        }.bind(this)
+      );
+    }
+
   }
 
   google_login(state) {
@@ -60,30 +81,23 @@ export default class Login extends Component {
   }
 
   login_callback(value) {
-    if (!(this.state.data.email && this.state.data.password) || value.error) {
-      let text;
-      if (!this.state.data.email) {
-        text = "Email field is missing";
-      }
+    if (value.error) {
+      let text = value.error;
+      this.fire_swal_error(text);
 
-      if (!this.state.data.password) {
-        text = "Password field is missing";
-      }
-
-      if (value.error) {
-        text = value.error;
-      }
-
-      Swal.fire({
-        title: "Warning",
-        text: text,
-        icon: "error",
-        confirmButtonText: "OK",
-      }).then(() => this.setState({ receive_response: true }));
     } else {
       save_token(value);
       window.location.href = "/home";
     }
+  }
+
+  fire_swal_error(text) {
+    Swal.fire({
+      title: "Warning",
+      text: text,
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then(() => this.setState({ waiting_for_response: false }));
   }
 
   render() {
@@ -125,7 +139,7 @@ export default class Login extends Component {
             submit={this.login}
             submit_button_type="gradient-info"
             submit_button_class={"w-100 my-4 mb-2"}
-            receive={this.state.receive_response}
+            waiting_for_external_response={this.state.waiting_for_response}
           >
             <TextInput name="email" placeholder="Email" />
             <TextInput type="password" name="password" placeholder="Password" />

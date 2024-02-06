@@ -97,10 +97,11 @@ export default class Dashboard extends Component {
                 time_scale: TIME_SCALES[0],
                 acre_range: Object.keys(ACRE_RANGES)[0],
                 visual_field: "Active",
-                table_rows: [],
             },
+
             region_data: [],
             markets: [],
+            table_rows: [],
 
             filter_data: {},
             filters_saved: false,
@@ -361,6 +362,7 @@ export default class Dashboard extends Component {
                         submit_url="/api/filters/"
                         defaults={this.state.saving_filter}
                         submit_success={(value) => this.setState({ saving_filter: null, filters_saved: true })}
+                        submit_button_float={{ float: 'right' }}
                     >
                         <TextInput name="name" label="Filter Name" />
                     </Form>
