@@ -12,6 +12,7 @@ import json
 import pprint
 import os
 
+
 def Index(request, param="", param2="", param3="", param4="", param5="", param6=""):
     if "HTTP_HOST" not in request.META:
         return HttpResponseForbidden()
@@ -20,7 +21,6 @@ def Index(request, param="", param2="", param3="", param4="", param5="", param6=
     #    return HttpResponse("You are on development.  Please use localhost:3000")
 
     return render(request, "index.html", {})
-
 
 
 @api_view(['POST'])
@@ -60,6 +60,7 @@ def ManageMarkets(request, id=None):
 
     return JsonResponse(json_response, safe=False)
 
+
 @api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def ManageMarketNotes(request, id=None):
@@ -72,6 +73,7 @@ def ManageMarketNotes(request, id=None):
     )
 
     return JsonResponse(json_response, safe=False)
+
 
 @api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])

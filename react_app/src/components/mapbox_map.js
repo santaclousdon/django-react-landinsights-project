@@ -290,8 +290,7 @@ export default class App extends React.PureComponent {
                         },
                         {
                             value: parseFloat(value),
-                            all_data: this.props.map_lookup_data[row.id],
-                            scope: this.props.map_data_scope,
+                            data_points: this.props.map_lookup_data[row.id],
                         }
                     );
                 } else {

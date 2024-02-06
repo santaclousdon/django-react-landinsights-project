@@ -9,7 +9,7 @@ export default class Loading extends Component {
         let height = window.innerHeight;
 
         if (this.props.loaded) {
-            return null;
+            return this.props.children;
         }
 
         return (

@@ -25,8 +25,8 @@ export default class InternalLayout extends Component {
     }
 
     load_user(value) {
-        this.setState({ loaded: true });
         window.secret_react_vars["user"] = value;
+        this.setState({ loaded: true });
     }
 
     check_scroll() {
@@ -60,29 +60,30 @@ export default class InternalLayout extends Component {
 
         return (
             <div className={container_class}>
-                <Loading loaded={this.state.loaded} />
-                <div>
-                    <Sidebar
-                        current_path={current_path}
-                        current_location={current_location}
-                        hidden={this.state.sidebar_hidden}
-                        className={sidebar_class}
-                    />
-                    <main className="main-content position-relative border-radius-lg">
-                        <Navbar
+                <Loading loaded={this.state.loaded} >
+                    <div>
+                        <Sidebar
                             current_path={current_path}
                             current_location={current_location}
-                            toggle_sidebar={() => this.setState({ sidebar_hidden: !this.state.sidebar_hidden })}
-                            toggle_sidebar_pin={() => this.setState({ sidebar_pinned: !this.state.sidebar_pinned })}
-                            scrolled={this.state.scrolled}
+                            hidden={this.state.sidebar_hidden}
+                            className={sidebar_class}
                         />
-                        <div className="container-fluid py-4">
-                            <div className="row">
-                                <Outlet context={{ user: this.state.user }} />
+                        <main className="main-content position-relative border-radius-lg">
+                            <Navbar
+                                current_path={current_path}
+                                current_location={current_location}
+                                toggle_sidebar={() => this.setState({ sidebar_hidden: !this.state.sidebar_hidden })}
+                                toggle_sidebar_pin={() => this.setState({ sidebar_pinned: !this.state.sidebar_pinned })}
+                                scrolled={this.state.scrolled}
+                            />
+                            <div className="container-fluid py-4">
+                                <div className="row">
+                                    <Outlet context={{ user: this.state.user }} />
+                                </div>
                             </div>
-                        </div>
-                    </main>
-                </div>
+                        </main>
+                    </div>
+                </Loading>
             </div>
         );
     }

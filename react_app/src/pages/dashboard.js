@@ -234,12 +234,12 @@ export default class Dashboard extends Component {
         let acrage_key = ACRE_RANGES[this.state.map_filter_data["acre_range"]];
         let field_key = this.state.map_filter_data["visual_field"];
 
-        let map_coloring_input = this.state.region_data;
+        let map_region_input = this.state.region_data;
         if (this.props.saved_markets) {
-            map_coloring_input = [];
+            map_region_input = [];
             for (let item of this.state.markets) {
                 if (item["region"]["id"] in region_data_lookup) {
-                    map_coloring_input.push(region_data_lookup[item["region"]["id"]]);
+                    map_region_input.push(region_data_lookup[item["region"]["id"]]);
                 }
             }
         }
@@ -248,8 +248,8 @@ export default class Dashboard extends Component {
         let map_color_data = {};
         let map_lookup_data = {};
 
-        if (map_coloring_input.length > 0) {
-            let test_row = map_coloring_input[0];
+        if (map_region_input.length > 0) {
+            let test_row = map_region_input[0];
             for (let key in test_row) {
                 if (key != acrage_key) {
                     continue;
@@ -267,8 +267,16 @@ export default class Dashboard extends Component {
             }
         }
 
-        for (let item of map_coloring_input) {
-            map_lookup_data[item['gid']] = item;
+
+        let data_point_names = window.secret_react_vars["user"]['data_point_preferences'];
+        for (let item of map_region_input) {
+            map_lookup_data[item['gid']] = {
+                'name': item['name'],
+                'state': item['state'],
+            };
+            for (let key of data_point_names) {
+                map_lookup_data[item['gid']][key] = item[acrage_key][key];
+            }
 
             let value = item[acrage_key][field_key];
             if (value > 0) {
@@ -411,7 +419,6 @@ export default class Dashboard extends Component {
                             style={{ minHeight: "500px" }}
 
                             map_lookup_data={map_lookup_data}
-                            map_data_scope={acrage_key}
                             map_color_data={map_color_data}
                             data_timestamp={this.state.data_timestamp}
 

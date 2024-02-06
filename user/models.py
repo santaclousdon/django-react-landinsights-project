@@ -5,6 +5,15 @@ from django.apps import apps
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+
+STANDARD_DATA_POINTS = [
+    '1mo STR',
+    '3mo STR',
+    '6mo STR', 
+    '1yr STR',
+]
+
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password):
         # Creates and saves a User with the given email and password.
@@ -60,6 +69,8 @@ class User(AbstractBaseUser):
     lia_member = models.BooleanField(default=False)
     beta = models.BooleanField(default=False)
 
+    data_point_preferences = models.JSONField(default=STANDARD_DATA_POINTS)
+
     objects = UserManager()
 
     USERNAME_FIELD = "email"
@@ -91,6 +102,8 @@ class User(AbstractBaseUser):
 
             'lia_member': self.lia_member,
             'beta': self.beta,
+
+            'data_point_preferences': self.data_point_preferences,
 
             'created_at': self.created_at.strftime('%m/%d/%Y'),
             'last_login': self.last_login.strftime('%m/%d/%Y'),
