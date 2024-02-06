@@ -6,6 +6,7 @@ from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from user.models import User
+from home.models import Company
 
 import requests
 import datetime
@@ -71,7 +72,6 @@ def GoogleLogin(request):
             name = data.get('name')
             email = data.get('email')
             password = make_password(raw_password)
-            print(password)
             user = User.objects.create(name=name, email=email, password=password)
             user.save()
             return JsonResponse(get_tokens_for_user(user))
@@ -95,6 +95,7 @@ def RegisterUser(request):
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
+        company_name = data.get('company_name')
 
         if not name:
             return JsonResponse({'error': 'Name field is missing'}, status=400)
@@ -102,9 +103,12 @@ def RegisterUser(request):
         if not email:
             return JsonResponse({'error': 'Email field is missing'}, status=400)
         
+        if not company_name:
+            return JsonResponse({'error': 'Company Name field is missing'}, status=400)
+        
         if not password:
             return JsonResponse({'error': 'Password field is missing'}, status=400)
-
+        
         try:
             validate_email(email)
 
@@ -118,9 +122,20 @@ def RegisterUser(request):
 
         hashed_password = make_password(password)
 
-        user = User.objects.create(name=name, email=email.lower(), password=hashed_password)
+        user = User.objects.create(name=name, email=email.lower(), password=hashed_password, last_login=now())
 
         user.save()
+
+        existing_company = Company.objects.filter(name=company_name).first()
+
+        if existing_company:
+            existing_company.members.add(user)
+        else:
+            company = Company.objects.create(name=company_name, owner=user)
+
+            company.save()
+
+            company.members.add(user)
 
         return JsonResponse(get_tokens_for_user(user))
     except KeyError as e:

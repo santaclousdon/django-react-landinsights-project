@@ -40,6 +40,7 @@ export default class Register extends Component {
       name: state["name"],
       email: state["email"],
       password: state["password"],
+      company_name: state["company_name"],
     };
 
     ajax_wrapper("POST", "/user/register/", data, this.signup_callback);
@@ -123,6 +124,7 @@ export default class Register extends Component {
           >
             <TextInput name="name" placeholder="Name" />
             <TextInput name="email" placeholder="Email" />
+            <TextInput name="company_name" placeholder="Company Name" />
             <TextInput type="password" name="password" placeholder="Password" />
           </Form>
           <p className="text-sm mt-3 mb-0">
