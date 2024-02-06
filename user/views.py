@@ -100,8 +100,14 @@ def RegisterUser(request):
         email = data.get('email')
         password = data.get('password')
 
-        if not name or not email or not password:
-            return JsonResponse({'error': 'Missing fields'}, status=400)
+        if not name:
+            return JsonResponse({'error': 'Name field is missing'}, status=400)
+        
+        if not email:
+            return JsonResponse({'error': 'Email field is missing'}, status=400)
+        
+        if not password:
+            return JsonResponse({'error': 'Password field is missing'}, status=400)
 
         try:
             validate_email(email)
