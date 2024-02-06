@@ -246,6 +246,7 @@ export default class Dashboard extends Component {
 
         let field_options = [];
         let map_color_data = {};
+        let map_lookup_data = {};
 
         if (map_coloring_input.length > 0) {
             let test_row = map_coloring_input[0];
@@ -267,6 +268,8 @@ export default class Dashboard extends Component {
         }
 
         for (let item of map_coloring_input) {
+            map_lookup_data[item['gid']] = item;
+
             let value = item[acrage_key][field_key];
             if (value > 0) {
                 map_color_data[item["gid"]] = value;
@@ -404,10 +407,14 @@ export default class Dashboard extends Component {
                 <div className="card mb-5">
                     <div className="card-header">
                         <MapboxMap
+                            source_layer="administrative"
                             style={{ minHeight: "500px" }}
+
+                            map_lookup_data={map_lookup_data}
+                            map_data_scope={acrage_key}
                             map_color_data={map_color_data}
                             data_timestamp={this.state.data_timestamp}
-                            source_layer="administrative"
+
                         />
                     </div>
                     <div className="card-body">

@@ -20,8 +20,13 @@ function get_all_children(component, parentFunctions, formState) {
             dataMapping.children = get_all_children(childComponent, formState);
         }
 
-        const componentInstance = React.cloneElement(childComponent, dataMapping);
+        let componentInstance = React.cloneElement(childComponent, {});
+        if (!['hr'].includes(childComponent.type)) {
+            componentInstance = React.cloneElement(childComponent, dataMapping);
+        }
+
         components.push(componentInstance);
+
     });
 
     return components;

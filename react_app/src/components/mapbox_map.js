@@ -1,9 +1,13 @@
 import React from "react";
+import ReactDOM from 'react-dom';
+
+import { ToolTipBox } from 'components'
 
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import "mapbox-gl/dist/mapbox-gl.css";
 mapboxgl.accessToken =
     "pk.eyJ1IjoicmVkc3RhZ2xhbmRjbyIsImEiOiJjbGZweWZ5cTExYTlmM3Fxemp3dmdnMHpoIn0.csOCrB3RQ6Fa9B8ZztLQRw";
+
 
 // https://docs.mapbox.com/help/tutorials/use-mapbox-gl-js-with-react/
 // https://github.com/mapbox/mapbox-react-examples/tree/master/data-overlay
@@ -80,6 +84,7 @@ export default class App extends React.PureComponent {
         };
 
         this.mapContainer = React.createRef();
+        this.tooltipContainer = null;
 
         this.add_polygon = this.add_polygon.bind(this);
 
@@ -107,6 +112,18 @@ export default class App extends React.PureComponent {
             });
         });
 
+        this.tooltipContainer = document.createElement('div');
+        const tooltip = new mapboxgl.Marker(this.tooltipContainer).setLngLat([0, 0]).addTo(map);
+
+        map.on('mousemove', (e) => {
+            const features = map.queryRenderedFeatures(e.point);
+
+            tooltip.setLngLat(e.lngLat);
+            map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+            console.log(features[0]);
+            this.setTooltip(features);
+        });
+
         map.on("load", () => {
             this.setState(
                 {
@@ -124,6 +141,21 @@ export default class App extends React.PureComponent {
     componentDidUpdate(prevProps) {
         if (this.props.data_timestamp != prevProps.data_timestamp) {
             this.add_heatmap_data_to_source();
+        }
+    }
+
+    setTooltip(features) {
+        if (features.length && features[0]['layer']['id'] == 'zip-codes-fill' && features[0]['state']['value']) {
+            ReactDOM.render(
+                React.createElement(
+                    ToolTipBox, {
+                    features
+                }
+                ),
+                this.tooltipContainer
+            );
+        } else {
+            ReactDOM.unmountComponentAtNode(this.tooltipContainer);
         }
     }
 
@@ -258,6 +290,8 @@ export default class App extends React.PureComponent {
                         },
                         {
                             value: parseFloat(value),
+                            all_data: this.props.map_lookup_data[row.id],
+                            scope: this.props.map_data_scope,
                         }
                     );
                 } else {
